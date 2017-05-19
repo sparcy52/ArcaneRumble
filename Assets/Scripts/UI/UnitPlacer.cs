@@ -11,7 +11,6 @@ public class UnitPlacer : MonoBehaviour {
 	private GameObject SelectedUnit;
 	private bool lockInHex = false;
 
-
 	Transform _t;
 	TileVector _pos = new TileVector(0,0);
 	CardinalDirection _facing = CardinalDirection.North;
@@ -43,7 +42,7 @@ public class UnitPlacer : MonoBehaviour {
 		}
 
 		if (Input.GetKeyDown(KeyCode.Space)) {
-			lockInHex = true;
+			lockInHex = !lockInHex;
 		}
 
 		if (Input.GetKeyDown(KeyCode.B)) {
@@ -67,7 +66,6 @@ public class UnitPlacer : MonoBehaviour {
 		for (int i = 0; i < Units.Length; i++) {
 			if (lockInHex == true && GUI.Button (new Rect (Screen.width / 20, Screen.height / 20 + Screen.height / 8.5f * i, 100, 25), Units [i].name)) {
 					PlaceMech (Units[i]);
-					Debug.Log ("123");
 			}
 
 		}
@@ -80,8 +78,10 @@ public class UnitPlacer : MonoBehaviour {
 	}
 
 
-	public void PlaceMech(GameObject GameUnit){
-		gameController.MakeMech (GameUnit,_pos,_facing,gameController.players[0]);
+	public void PlaceMech(GameObject GameUnit)
+	{
+		lockInHex = false;
+		gameController.MakeUnit (GameUnit,_pos,_facing,gameController.players[0]);
 	}
 
 

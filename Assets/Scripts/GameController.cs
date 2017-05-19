@@ -26,7 +26,7 @@ public class GameController : MonoBehaviour
 		for (var i = 0; i < UnitCount; i++)
 		{
 			var pos = i % 2 == 0 ? new TileVector(i, 0) : new TileVector(0, i);
-			MakeMech(Instantiate(TestUnits[i%TestUnits.Length]), pos, CardinalDirection.North, players[i%2]);
+			MakeUnit(TestUnits[i%TestUnits.Length], pos, CardinalDirection.North, players[i%2]);
 		}
 	}
 
@@ -52,12 +52,29 @@ public class GameController : MonoBehaviour
 		}
 	}
 
-	public bool MakeMech(GameObject unitAvatar, TileVector pos, CardinalDirection dir, Player owner)
+	/// <summary>
+	/// Creates a new Unit from a prefab. This includes adding it to the game logic, and creating a visual
+	/// representation. The prefab provided should have a UnitAvatar script attatched, as well as any
+	/// requirements of that script. This operation will fail if the given position is already occupied.
+	/// </summary>
+	/// <param name="unitPrefab">the prefab of the unit to create</param>
+	/// <param name="pos">the TileVector position to spawn it</param>
+	/// <param name="dir">the Direction for it to be facing</param>
+	/// <param name="owner">the Player owner of the Unit</param>
+	/// <returns>true if the operation was successful; false if not</returns>
+	public bool MakeUnit(GameObject unitPrefab, TileVector pos, CardinalDirection dir, Player owner)
 	{
-		UnitAvatar avatar = unitAvatar.GetComponent<UnitAvatar>();
+		UnitAvatar avatar = Instantiate(unitPrefab).GetComponent<UnitAvatar>();
+
 		Unit unit = new Unit(avatar, pos, dir, owner);
 		owner.AddUnit (unit);
 		avatar.SetPositionAndOrientation(pos, dir);
-		return _worldController.AddUnit(unit);
+
+		if (!_worldController.AddUnit(unit))	// oops! bad unit placement, so delete the unit as if nothing happened
+		{
+			Destroy(avatar.gameObject);
+			return true;
+		}
+		else return true;
 	}
 }
