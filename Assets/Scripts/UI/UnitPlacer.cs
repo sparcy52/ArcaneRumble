@@ -83,9 +83,9 @@ public class UnitPlacer : MonoBehaviour {
 	public void PlaceMech(GameObject GameUnit)
 	{
 		lockInHex = false;
-		if (gameController.MakeUnit(GameUnit, _pos, _facing, gameController.players[currentPlayer]))
+		if (gameController.MakeUnit(GameUnit, _pos, _facing, gameController.Players[currentPlayer]))
 		{
-			currentPlayer = (currentPlayer + 1) % gameController.players.Length;
+			currentPlayer = (currentPlayer + 1) % gameController.Players.Length;
 			if (currentPlayer == 0) gameController.DoTurn();
 		}
 	}

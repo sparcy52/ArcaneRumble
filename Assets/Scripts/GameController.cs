@@ -11,15 +11,15 @@ public class GameController : MonoBehaviour
 
 	public int UnitCount = 3;
 
-	public Player[] players = new Player[2];
+	public Player[] Players = new Player[2];
 
-    public int mapsize = 20;
-    public int numberOfMaps = 1;
+    public int MapSize = 20;
+    public int NumberOfMaps = 1;
 
 	private WorldController _worldController;
 
-	public Color player_1_Unit_Color = Color.red;		//player 1's unit color
-	public Color player_2_Unit_Color = Color.blue;		//player 2's unit color
+	public Color Player1Color = Color.red;		//player 1's unit color
+	public Color Player2Color = Color.blue;		//player 2's unit color
 
 	private GameObject go;
 
@@ -30,17 +30,17 @@ public class GameController : MonoBehaviour
 	
 	private void Start()
 	{
-        int map = Random.Range(0, numberOfMaps);
-		var world = new World(map, mapsize);
+        int map = Random.Range(0, NumberOfMaps);
+		var world = new World(map, MapSize);
 		_worldController = new WorldController(world);
 		RenderWorld(world);
-		players[0] = new Player(1);
-		players[1] = new Player(2);
+		Players[0] = new Player(1);
+		Players[1] = new Player(2);
 
 		for (var i = 0; i < UnitCount; i++)
 		{
 			var pos = i % 2 == 0 ? new TileVector(i, 0) : new TileVector(0, i);
-			MakeUnit(TestUnits[i%TestUnits.Length], pos, CardinalDirection.North, players[i%2]);
+			MakeUnit(TestUnits[i%TestUnits.Length], pos, CardinalDirection.North, Players[i%2]);
 		}
 	}
 
@@ -86,9 +86,9 @@ public class GameController : MonoBehaviour
 			foreach (Material m in r.materials) {
 				if (m.HasProperty ("_Color")) {
 					if (owner.num == 1) {
-						m.color = player_1_Unit_Color;
+						m.color = Player1Color;
 					} else {
-						m.color = player_2_Unit_Color;
+						m.color = Player2Color;
 					}
 				}
 			}
