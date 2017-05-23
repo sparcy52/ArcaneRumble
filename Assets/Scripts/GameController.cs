@@ -18,6 +18,11 @@ public class GameController : MonoBehaviour
 
 	private WorldController _worldController;
 
+	public Color player_1_Unit_Color = Color.red;		//player 1's unit color
+	public Color player_2_Unit_Color = Color.blue;		//player 2's unit color
+
+	private GameObject go;
+
 	private void Start()
 	{
         int map = Random.Range(0, numberOfMaps);
@@ -70,6 +75,20 @@ public class GameController : MonoBehaviour
 	{
 		UnitAvatar avatar = Instantiate(unitPrefab).GetComponent<UnitAvatar>();
 
+		Renderer[] rend = avatar.gameObject.GetComponentsInChildren<MeshRenderer>();
+
+		foreach (Renderer r in rend) {
+			foreach (Material m in r.materials) {
+				if (m.HasProperty ("_Color")) {
+					if (owner.num == 1) {
+						m.color = player_1_Unit_Color;
+					} else {
+						m.color = player_2_Unit_Color;
+					}
+				}
+			}
+		}
+			
 		Unit unit = new Unit(avatar, pos, dir, owner);
 		owner.AddUnit (unit);
 		avatar.SetPositionAndOrientation(pos, dir);

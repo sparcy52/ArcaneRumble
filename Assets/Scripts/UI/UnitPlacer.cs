@@ -8,7 +8,7 @@ public class UnitPlacer : MonoBehaviour {
 
 	public GameObject[] Units;
 	public GameController gameController;
-	private GameObject SelectedUnit;
+	private GameObject go;
 	private bool lockInHex = false;
 
 	Transform _t;

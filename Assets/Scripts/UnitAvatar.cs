@@ -22,6 +22,7 @@ public class UnitAvatar : MonoBehaviour
 	// Movement state trackers
 	private Queue<MoveAnimation> _moveQueue = new Queue<MoveAnimation>();
 
+
 	public Quaternion Rotation
 	{
 		set { transform.rotation = value; }
