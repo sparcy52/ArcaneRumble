@@ -47,7 +47,11 @@ namespace Model
 		{
 			ApplyMove(replacement);
 			OnReject(rejected, replacement);
-			if (--_timeout == 0) OnTimeout();
+			if (--_timeout == 0)
+			{
+				Utils.Printf("Timed out TurnPlan {0} on move {1}", this, rejected);
+				OnTimeout();
+			}
 		}
 
 		public bool IsActive()
@@ -78,6 +82,20 @@ namespace Model
 		{
 			return Unit.LastMove as T;
 		}
+		
+		private void ApplyMove(Move move)
+		{
+			if (move.IsStep())	// update the board if this unit is moving position
+			{
+				var origin = World[Unit.Position];
+				if (origin.Occupant == Unit) // NullReferenceException here indicates a move from a bad position
+				{
+					origin.Occupant = null;
+				}
+				World[move.Destination].Occupant = Unit;
+			}
+			Unit.ApplyMove(move);
+		}
 
 		// MOVE CREATION
 
@@ -104,20 +122,6 @@ namespace Model
 		protected Move Step(CardinalDirection cardinal)
 		{
 			return this.Step(Unit.Facing.Cross(cardinal));
-		}
-
-		private void ApplyMove(Move move)
-		{
-			if (move.IsStep())	// update the board if this unit is moving position
-			{
-				var origin = World[Unit.Position];
-				if (origin.Occupant == Unit) // NullReferenceException here indicates a move from a bad position
-				{
-					origin.Occupant = null;
-				}
-				World[move.Destination].Occupant = Unit;
-			}
-			Unit.ApplyMove(move);
 		}
 	}
 }

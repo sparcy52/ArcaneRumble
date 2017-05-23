@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Model
 {
@@ -25,7 +26,7 @@ namespace Model
 		public bool AddUnit(Unit newUnit)
 		{
 			var hex = _world[newUnit.Position];
-			if (hex.Occupant == null)
+			if (hex != null && hex.Occupant == null)
 			{
 				hex.Occupant = newUnit;
 				_units.Add(newUnit);
@@ -40,11 +41,12 @@ namespace Model
 		public void DoTurn()
 		{
 			var activeUnits = new List<Unit>(_units);
-			var turnPlans = new List<TurnPlan>();
+			var turnPlans = new Dictionary<Unit, TurnPlan>();
 
 			foreach (var unit in activeUnits)
 			{
-				turnPlans.Add(unit.GetMovementPlan(_world));
+				unit.Reset();
+				turnPlans.Add(unit, unit.GetMovementPlan(_world));
 			}
 
 			while (activeUnits.Count > 0) // main loop: iterate through each simulation frame
@@ -55,7 +57,7 @@ namespace Model
 				// TODO: also check units which are in combat at the start of the turn
 
 				// STEP 1: AI PROCESSING
-				foreach (var plan in turnPlans) // collect all units' moves into the Dictionary
+				foreach (var plan in turnPlans.Values) // collect all units' moves into the Dictionary
 				{
 					var move = plan.GetNextMove();
 
@@ -137,8 +139,9 @@ namespace Model
 					foreach (var adj in unit.Position.Adjacent().Select(pos => _world[pos])) // for each adjacent Hex
 					{
 						if (adj == null) continue;
+						
 						var neighbour = adj.Occupant;
-						if (neighbour != null && neighbour.Owner.num != unit.Owner.num)
+						if (neighbour != null && neighbour.Owner!= unit.Owner)
 						{
 							pendingCombat.Add(new Combat(unit, neighbour));
 						}
@@ -147,19 +150,36 @@ namespace Model
 				}
 
 				// STEP 4: COMBAT RESOLUTION
-				foreach (var combat in pendingCombat.OrderBy(c => c, Combat.PriorityComparer))	// sort by priortiy
+				var pendingCombatSorted = new List<Combat>(pendingCombat);
+				pendingCombatSorted.Sort(Combat.PriorityComparer);	// sort by priortiy
+				
+				foreach (var combat in pendingCombatSorted)
 				{
-					if (combat.Unit1.Health > 0 && combat.Unit2.Health > 0)
+					var unit1 = combat.Unit1;
+					var unit2 = combat.Unit2;
+
+					if (!unit1.IsDead() && !unit2.IsDead())
 					{
 						combat.Apply();
+						
+						if (unit1.IsDead())
+						{
+							turnPlans.Remove(unit1);
+							activeUnits.Remove(unit1);
+							_world[unit1.Position].Occupant = null; // NullRef here indicates bad unit position
+							_units.Remove(unit1);
+							unit1.Kill();
+						}
+						if (unit2.IsDead())
+						{
+							turnPlans.Remove(unit2);
+							activeUnits.Remove(unit2);
+							_world[unit2.Position].Occupant = null; // NullRef here indicates bad unit position
+							_units.Remove(unit2);
+							unit2.Kill();
+						}
 					}
 				}
-
-			}
-
-			foreach (var unit in _units)
-			{
-				unit.Reset();
 			}
 		}
 

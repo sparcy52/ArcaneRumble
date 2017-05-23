@@ -22,6 +22,7 @@ public class UnitAvatar : MonoBehaviour
 	// Movement state trackers
 	private Queue<MoveAnimation> _moveQueue = new Queue<MoveAnimation>();
 
+	private bool _kill = false;
 
 	public Quaternion Rotation
 	{
@@ -41,6 +42,11 @@ public class UnitAvatar : MonoBehaviour
 		Animator = GetComponent<Animator>();
 	}
 
+	public void Kill()
+	{
+		_kill = true;
+	}
+
 	void FixedUpdate()
 	{
 		if (_moveQueue.Count > 0)
@@ -49,6 +55,10 @@ public class UnitAvatar : MonoBehaviour
 			{
 				_moveQueue.Dequeue();
 			}
+		} 
+		else if (_kill)
+		{
+			Destroy(gameObject);
 		}
 	}
 

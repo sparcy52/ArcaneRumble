@@ -39,7 +39,7 @@ namespace Model
 			Facing = facing;
 
 			MaxHealth = _avatar.MaxHealth;
-			Health = Health;
+			Health = MaxHealth;
 
 			MaxEnergy = _avatar.MaxEnergy;
 			Energy = MaxEnergy;
@@ -56,6 +56,16 @@ namespace Model
 			return _currentMove;
 		}
 
+		public bool IsDead()
+		{
+			return Health <= 0;
+		}
+
+		public void Kill()
+		{
+			_avatar.Kill();
+		}
+		
 		public bool CanMove()
 		{
 			// TODO: this will probably need refinement!
@@ -90,6 +100,8 @@ namespace Model
 			var startingHealth = this.Health;	// trade energy for health with the other unit
 			this.Health -= other.Energy;		// implementing combat in two halves like this guarantees symmetry
 			other.Energy -= startingHealth;
+			
+			Utils.Print("hi!");
 		}
 	}
 }
