@@ -23,6 +23,11 @@ public class GameController : MonoBehaviour
 
 	private GameObject go;
 
+	public void DoTurn()
+	{
+		_worldController.DoTurn();
+	}
+	
 	private void Start()
 	{
         int map = Random.Range(0, numberOfMaps);
@@ -41,7 +46,7 @@ public class GameController : MonoBehaviour
 
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.Z)) _worldController.DoTurn();
+		if (Input.GetKeyDown(KeyCode.Z)) DoTurn();
 	}
 
 	private void RenderWorld(World world)
@@ -96,7 +101,7 @@ public class GameController : MonoBehaviour
 		if (!_worldController.AddUnit(unit))	// oops! bad unit placement, so delete the unit as if nothing happened
 		{
 			Destroy(avatar.gameObject);
-			return true;
+			return false;
 		}
 		else return true;
 	}

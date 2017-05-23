@@ -11,6 +11,8 @@ public class UnitPlacer : MonoBehaviour {
 	private GameObject go;
 	private bool lockInHex = false;
 
+	private int currentPlayer = 0;
+	
 	Transform _t;
 	TileVector _pos = new TileVector(0,0);
 	CardinalDirection _facing = CardinalDirection.North;
@@ -81,7 +83,11 @@ public class UnitPlacer : MonoBehaviour {
 	public void PlaceMech(GameObject GameUnit)
 	{
 		lockInHex = false;
-		gameController.MakeUnit (GameUnit,_pos,_facing,gameController.players[0]);
+		if (gameController.MakeUnit(GameUnit, _pos, _facing, gameController.players[currentPlayer]))
+		{
+			currentPlayer = (currentPlayer + 1) % gameController.players.Length;
+			if (currentPlayer == 0) gameController.DoTurn();
+		}
 	}
 
 
