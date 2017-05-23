@@ -38,9 +38,13 @@ namespace Model
                 string[] mapline = line.Split('\t');
                 for(int j = 0; j < mapline.Length; j++)
                 {
-                        if(mapline[j] == "-")
+                    if(mapline[j] == "-")
                     {
-                        //Do nothing
+                            //Do nothing
+                    }
+                    else if(mapline[j] == "o")
+                    {
+                        _terrain[i, j] = new Hex(HexType.Dirt, 1);
                     }
                     else
                     {
@@ -74,26 +78,58 @@ namespace Model
 		}
 	}
 
-	public class Hex
-	{
-		/// <summary>
-		/// The Unit that is currently in this Hex, null if there is none present.
-		/// </summary>
-		public Unit Occupant { get; set; }	// TODO: revise this design decision
+    public class Hex
+    {
+        /// <summary>
+        /// The Unit that is currently in this Hex, null if there is none present.
+        /// </summary>
+        public Unit Occupant { get; set; }  // TODO: revise this design decision
 
-		/// <summary>
-		/// The type of terrain this represents.
-		/// </summary>
-		public HexType Type { get; private set; } 	// replace with a delegate to implement more complex hex behavior
+        /// <summary>
+        /// The type of terrain this represents.
+        /// </summary>
+        public HexType Type { get; private set; } 	// replace with a delegate to implement more complex hex behavior
 
-		// public int Height { get; private set; }; // for if we want to implement height later
+        public Objective objective { get; set; }
 
-		public Hex(HexType type)
-		{
-			Type = type;
-			Occupant = null;
-		}
-	}
+
+        // public int Height { get; private set; }; // for if we want to implement height later
+
+        public Hex(HexType type)
+        {
+            Type = type;
+            Occupant = null;
+            objective = null;
+        }
+
+        public Hex(HexType type, int i)
+        {
+            Type = type;
+            Occupant = null;
+            objective = new Objective();
+        }
+        public bool hasObjective()
+        {
+            if (objective == null)
+            {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+    }
+    public class Objective
+    {
+        public Player controllingPlayer { get; set; }
+
+        public Objective()
+            {
+                controllingPlayer = null;
+            }
+    }
+        
+
 
 	public enum HexType
 	{

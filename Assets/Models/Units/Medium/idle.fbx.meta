@@ -50,6 +50,7 @@ ModelImporter:
     100084: pSphere7
     100086: pTorus1
     100088: transform1
+    100090: group2
     400000: group1
     400002: //RootNode
     400004: ikHandle1
@@ -95,6 +96,7 @@ ModelImporter:
     400084: pSphere7
     400086: pTorus1
     400088: transform1
+    400090: group2
     2300000: pCone1
     2300002: pCone2
     2300004: pCone3
