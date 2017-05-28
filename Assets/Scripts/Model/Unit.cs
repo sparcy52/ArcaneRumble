@@ -97,11 +97,15 @@ namespace Model
 			else if (combat.Unit2 == this) 	other = combat.Unit1;
 			else throw new ArgumentException("Applied combat does not reference this unit");
 
+			// turn to face other unit
+			CardinalDirection? combatDirection = Position.GetApproximateDirectionTo(other.Position);
+			if (!combatDirection.HasValue) throw new Exception();	// could not face other unit - probably same pos
+			Move.Turn(_currentMove, combatDirection.Value.Cross(Facing)).Accept();	// weird call stack
+			
+			// do combat
 			var startingHealth = this.Health;	// trade energy for health with the other unit
 			this.Health -= other.Energy;		// implementing combat in two halves like this guarantees symmetry
 			other.Energy -= startingHealth;
-			
-			Utils.Print("hi!");
 		}
 	}
 }
