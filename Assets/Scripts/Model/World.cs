@@ -23,12 +23,21 @@ namespace Model
 				}
 			}
 		}*/
+
+        public World()
+        {
+            W = 20;
+            E = 20;
+            _terrain = new Hex[E, W];
+        }
         public World(int map, int mapsize)
         {
             W = mapsize;
             E = mapsize;
             _terrain = new Hex[mapsize, mapsize];
             String filename = "map" + map + ".txt";
+
+
             StreamReader reader = File.OpenText(filename);
             string line;
             int i = 0;
