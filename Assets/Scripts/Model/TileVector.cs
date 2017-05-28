@@ -30,10 +30,32 @@ namespace Model
 
 		    for (int i = 0; i < 6; i++)
 		    {
-			    CardinalDirection dir = CardinalDirection.North.ArcClockwise(i);
+			    var dir = CardinalDirection.North.ArcClockwise(i);
 			    adjacent.Add(this + dir);
 		    }
 		    return adjacent;
+	    }
+
+	    public CardinalDirection? GetApproximateDirection()
+	    {
+		    var bearing = GetBearing();
+		    if (float.IsNaN(bearing)) return null;
+		    var dir = (int) (bearing + 30) % 360 / 60;	// round to nearest int from 0-5
+		    return (CardinalDirection) dir;
+	    }
+
+	    public CardinalDirection? GetApproximateDirectionTo(TileVector other)
+	    {
+		    return (other - this).GetApproximateDirection();
+	    }
+
+	    public float GetBearing()
+	    {
+		    if (W == 0 && E == 0) return float.NaN;
+		    var angleSum = 0;
+		    angleSum += CardinalDirection.Southwest.GetBearing() * W;
+		    angleSum += CardinalDirection.Southeast.GetBearing() * E;
+		    return (float) angleSum / (W + E) % 360;
 	    }
 
 	    /// <summary>
