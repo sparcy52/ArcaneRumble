@@ -31,7 +31,7 @@ public class GameController : MonoBehaviour
 	private void Start()
 	{
         int map = Random.Range(0, NumberOfMaps);
-		var world = new World(map, MapSize);
+		var world = new World(map);
 		_worldController = new WorldController(world);
 		RenderWorld(world);
 		Players[0] = new Player(1);
