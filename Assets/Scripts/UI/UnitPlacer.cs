@@ -11,6 +11,8 @@ public class UnitPlacer : MonoBehaviour {
 	private GameObject go;
 	private bool lockInHex = false;
 
+	public GUISkin customSkin1;
+
 	private int currentPlayer = 0;
 	
 	Transform _t;
@@ -24,9 +26,6 @@ public class UnitPlacer : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-//
-//		Buttons = Buttons.GetComponent<Button>();
-//		Buttons.onClick.AddListener(SelectUnit);
 
 		if (lockInHex == false) {
 			if (Input.GetKeyDown (KeyCode.W))
@@ -62,6 +61,7 @@ public class UnitPlacer : MonoBehaviour {
 	}
 
 	void OnGUI(){
+		GUI.skin = customSkin1;
 		if (GUI.Button (new Rect (Screen.width / 2.5f, Screen.height / 20, 120, 30), "Start")) {
 			Debug.Log ("Start button is pressed");
 		}

@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 1826c13f6047f4e4fa9f2e37474aa275
+timeCreated: 1495958460
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - HpBar: {fileID: 1859770748734772, guid: cb79d2184d0d34918a2b81aad11e0837, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

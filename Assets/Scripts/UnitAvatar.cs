@@ -9,6 +9,10 @@ public class UnitAvatar : MonoBehaviour
 	public int MaxHealth;
 	public int MaxEnergy;
 
+	private float HpPercent;
+	private GameObject _hpBar;
+	private Unit _unit;
+
 	public UnitAi Ai;
 
 	// Comsmetic variables
@@ -40,11 +44,29 @@ public class UnitAvatar : MonoBehaviour
 	{
 		//Transform = GetComponent<Transform>();
 		Animator = GetComponent<Animator>();
+		_hpBar = Instantiate(GuiComponents.GetHpBar ());
+	}
+
+	// Update is called once per frame
+	void Update () {
+		if (_unit == null) return;
+		HpPercent = _unit.Health / _unit.MaxHealth;
+		_hpBar.transform.position = new Vector3 (this.Position.x, this.Position.y+3f, this.Position.z);
+		SetHpBar (HpPercent);	
+	}
+
+	public void SetHpBar(float health){
+		_hpBar.transform.localScale = new Vector3 (health,_hpBar.transform.localScale.y,_hpBar.transform.localScale.z);
 	}
 
 	public void Kill()
 	{
 		_kill = true;
+	}
+
+	void CleanUp(){
+		Destroy(gameObject);
+		Destroy (_hpBar);
 	}
 
 	void FixedUpdate()
@@ -58,14 +80,15 @@ public class UnitAvatar : MonoBehaviour
 		} 
 		else if (_kill)
 		{
-			Destroy(gameObject);
+			CleanUp ();
 		}
 	}
 
-	public void SetPositionAndOrientation(TileVector tv, CardinalDirection dir)
+	public void SetUnit(Unit unit)
 	{
-		Position = tv.ToVector3();
-		Rotation = dir.GetBearingRotation();
+		_unit = unit;
+		Position = unit.Position.ToVector3();
+		Rotation = unit.Facing.GetBearingRotation();
 	}
 
 	public void ApplyMove(Move move)
