@@ -23,6 +23,8 @@ public class GameController : MonoBehaviour
 
 	private GameObject go;
 
+	private GameObject[] instancedTiles;
+
 	public void DoTurn()
 	{
 		_worldController.DoTurn();
@@ -33,6 +35,7 @@ public class GameController : MonoBehaviour
         int map = Random.Range(0, NumberOfMaps);
 		var world = new World(map);
 		_worldController = new WorldController(world);
+		CleanWorld();
 		RenderWorld(world);
 		Players[0] = new Player(1);
 		Players[1] = new Player(2);
@@ -63,6 +66,15 @@ public class GameController : MonoBehaviour
 					_hexInstances.Add(tile);
 				}
 			}
+		}
+	}
+	private void CleanWorld()
+	{
+		if (instancedTiles == null) {
+			instancedTiles = GameObject.FindGameObjectsWithTag ("EditorTile");
+		}
+		foreach (GameObject tile in instancedTiles) {
+			DestroyImmediate (tile);
 		}
 	}
 

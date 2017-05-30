@@ -19,7 +19,6 @@ public class PreWorldGen : MonoBehaviour {
         var world = new World(map);
         _worldController = new WorldController(world);
         int numberOfObjects = world.E * world.W;
-        instancedTiles = new GameObject[numberOfObjects];
         CleanWorld();
         RenderWorld(world);
     }
@@ -40,18 +39,18 @@ public class PreWorldGen : MonoBehaviour {
                     var tile = Instantiate(HexModels[(int)hex.Type]);
                     tile.transform.position = new TileVector(w, e).ToVector3();
                     _hexInstances.Add(tile);
-                    Debug.Log(tile.ToString() + w + e);
+                //    Debug.Log(tile.ToString() + w + e);
                 }
             }
         }
     }
     private void CleanWorld()
     {
-        foreach(GameObject obj in _hexInstances)
-        {
-            Debug.Log(obj.ToString());
-            Destroy(obj);
-            
-        }
+		if (instancedTiles == null) {
+			instancedTiles = GameObject.FindGameObjectsWithTag ("EditorTile");
+		}
+		foreach (GameObject tile in instancedTiles) {
+			DestroyImmediate (tile);
+		}
     }
 }

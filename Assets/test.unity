@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44648892, g: 0.4963268, b: 0.5747255, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -554,7 +554,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2026539734}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6b12959a7ca671d448d0a12ad1bae8c8, type: 3}
   m_Name: 
@@ -562,9 +562,9 @@ MonoBehaviour:
   NumberOfMaps: 1
   MapSize: 20
   HexModels:
-  - {fileID: 100002, guid: 7471a8ff2e3b9c142b6f629ebae1f069, type: 3}
-  - {fileID: 100016, guid: 5ccf83df7dfdc8e4db9814e44e8f843d, type: 3}
-  - {fileID: 100016, guid: 6e7965859e94d4f43a02aa43f2c60dfc, type: 3}
+  - {fileID: 1779119452671348, guid: cba1847ea289a43bfb2a80d5ba702506, type: 2}
+  - {fileID: 1324208636248522, guid: 534df325f6a084db783b6f2915845e4b, type: 2}
+  - {fileID: 1811219959973694, guid: a1777cb580f854dc4ad25d68f1f796a0, type: 2}
 --- !u!4 &2026539736
 Transform:
   m_ObjectHideFlags: 0
