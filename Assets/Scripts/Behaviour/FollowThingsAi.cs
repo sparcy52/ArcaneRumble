@@ -1,4 +1,5 @@
-﻿using System.CodeDom;
+﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using Model;
 using UnityEngine;
@@ -6,7 +7,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Assets/Scripts/Behaviour/FollowThingsAi")]
 public class FollowThingsAi : UnitAi
 {
-
 	public bool FollowEnemies;
 	public bool FollowObjectives;
 	public bool DefendObjectives;
@@ -14,6 +14,7 @@ public class FollowThingsAi : UnitAi
 
 	public override TurnPlan GetMovementPlan(Unit unit, World world)
 	{
+		if (world == null) throw new Exception("Missing World!");
 		return new FollowThingsPlan(unit, world, this);
 	}
 }
@@ -22,90 +23,127 @@ public class FollowThingsPlan : TurnPlan
 {
 	private Unit _unitTarget;
 	private Objective _objectiveTarget;
-	private readonly Unit _unit;
-	private readonly World _world;
+	private TileVector _objectivePos;	// assumes that Objectives can't move!
 
 	private FollowThingsAi _parent;
 
 	public FollowThingsPlan(Unit unit, World world, FollowThingsAi parent) : base(unit, world)
 	{
-		_unit = unit;
+		var last = GetLastMove<FollowThingsPlan>();
+		if (last != null)
+		{
+			_unitTarget = last._unitTarget;
+			_objectiveTarget = last._objectiveTarget;
+			_objectivePos = last._objectivePos;
+		}
 		_parent = parent;
-		if (GetLastMove<FollowThingsPlan> () == null) 
-		{
-			FindTarget ();
-		}
-		else
-		{
-			//_target = GetLastMove<FollowThingsPlan>()._target;	
-		}
-		_world = world;
 	}
 
 	public override Move GetNextMove()
 	{
-//		if (_target != null) return Step(Pursue());
-//		else 
-		return Step(RelativeDirection.Forward);
+		FindTarget();
+		return Pursue();
 	}
 
 	public void FindTarget()
 	{
+		// check if we already have targets, and that they are still valid
+		if (_unitTarget != null &&_unitTarget.IsDead()) _unitTarget = null;
+		if (_objectiveTarget != null && !ShouldFollowObjective(_objectiveTarget)) _objectiveTarget = null;
+		
+		if (_unitTarget != null || _objectiveTarget != null) return;	// don't find new target if we already have one
+		
 		TileVector? closestTargetPos = null;
 
-		for (int w = 0; w < _world.W; w++) 
+		for (int w = 0; w < World.W; w++) 
 		{
-			for (int e = 0; e < _world.E; e++) 
+			for (int e = 0; e < World.E; e++) 
 			{
 				var pos = new TileVector (w, e);
+				if (World[pos] == null) continue;
+				
 				bool hasTarget = false;
-				Hex h = _world [w, e];
+				Hex h = World [w, e];
 
-				if(h.Occupant != null && h.Occupant.Owner.num != _unit.Owner.num && _parent.FollowEnemies) // add a check for invalid spaces?
+				if(h.Occupant != null && h.Occupant.Owner != Unit.Owner && _parent.FollowEnemies)
 				{
 					hasTarget = true;
 				}
-
-				else if(h.objective != null)
-					
+				
+				if(h.objective != null)
 				{
-					if (_parent.AttackObjectives && !h.objective.controllingPlayer.Equals (_unit.Owner.num)) 
-					{
-						hasTarget = true;
-					}
-					if (_parent.DefendObjectives && h.objective.controllingPlayer.Equals (_unit.Owner.num)) 
-					{
-						hasTarget = true;
-					}
-					if (_parent.FollowObjectives && h.objective.controllingPlayer == null) 
-					{
-						hasTarget = true;
-					}
-
+					hasTarget = ShouldFollowObjective(h.objective);
 				}
-				var distance = TileVector.Distance (pos, _unit.Position);
-				if (!closestTargetPos.HasValue) 
+
+				if (hasTarget)
 				{
-					closestTargetPos = pos;
-				} 
-				else if (hasTarget && distance < TileVector.Distance (closestTargetPos.Value, _unit.Position)) 
-				{
-					closestTargetPos = pos;
+					if (!closestTargetPos.HasValue)
+					{
+						closestTargetPos = pos;
+					}
+					else
+					{
+						var distance = TileVector.Distance (pos, Unit.Position);
+						if (distance < TileVector.Distance(closestTargetPos.Value, Unit.Position))
+						{
+							closestTargetPos = pos;
+						}
+					}
 				}
+				
 			}
-
 		}
 
+		if (!closestTargetPos.HasValue) return;	// didn't find anything
+		
 		if (_parent.FollowEnemies) {
-			_unitTarget = _world [closestTargetPos.Value.W, closestTargetPos.Value.E].Occupant;
+			_unitTarget = World [closestTargetPos.Value.W, closestTargetPos.Value.E].Occupant;
 		} else {
-			_objectiveTarget = _world [closestTargetPos.Value.W, closestTargetPos.Value.E].objective;
+			_objectiveTarget = World [closestTargetPos.Value.W, closestTargetPos.Value.E].objective;
+			_objectivePos = closestTargetPos.Value;
 		}
 	}
 
-	public CardinalDirection Pursue()
+	public Move Pursue()
 	{
-		return CardinalDirection.North;
-		//get direction to move in for current target
+		if (_unitTarget != null) // persue units in precedence to objectives
+		{
+			var dir = Unit.Position.GetApproximateDirectionTo(_unitTarget.Position);
+			if (dir.HasValue) return Step(dir.Value);
+			else return Halt();
+		}
+		if (_objectiveTarget != null)
+		{
+			if (_objectivePos == Unit.Position)	// if we don't need to move
+			{
+				if (_unitTarget != null)
+				{
+					var dir = Unit.Position.GetApproximateDirectionTo(_unitTarget.Position);
+					if (dir.HasValue) return Turn(dir.Value);
+					Utils.Print("shit");
+					return Halt();
+				}
+				else return Halt();
+			}
+			return Step(Unit.Position.GetApproximateDirectionTo(_objectivePos).Value);
+		}
+		return Step(RelativeDirection.Forward);
+	}
+
+	private bool ShouldFollowObjective(Objective o)
+	{
+		if (_parent.AttackObjectives && o.controllingPlayer != Unit.Owner)
+		{
+			return true;
+		}
+		if (_parent.DefendObjectives && o.controllingPlayer == Unit.Owner) 
+		{
+			return true;
+		}
+		if (_parent.FollowObjectives && o.controllingPlayer == null) 
+		{
+			return true;
+		}
+		return false;
 	}
 }

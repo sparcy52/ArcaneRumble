@@ -79,7 +79,79 @@ ModelImporter:
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Take 001
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 180
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Arms
+        weight: 1
+      - path: Body
+        weight: 1
+      - path: joint1
+        weight: 1
+      - path: joint1/joint2
+        weight: 1
+      - path: joint1/joint2/joint3
+        weight: 1
+      - path: joint1/joint2/joint3/joint4
+        weight: 1
+      - path: joint1/joint2/joint3/joint7
+        weight: 1
+      - path: joint1/joint2/joint3/joint7/joint9
+        weight: 1
+      - path: joint1/joint2/joint3/joint7/joint9/joint10
+        weight: 1
+      - path: joint1/joint2/joint3/joint8
+        weight: 1
+      - path: joint1/joint2/joint3/joint8/joint11
+        weight: 1
+      - path: joint1/joint2/joint3/joint8/joint11/joint12
+        weight: 1
+      - path: joint1/joint5
+        weight: 1
+      - path: joint1/joint5/joint15
+        weight: 1
+      - path: joint1/joint5/joint15/joint16
+        weight: 1
+      - path: joint1/joint5/joint15/joint16/joint18
+        weight: 1
+      - path: joint1/joint6
+        weight: 1
+      - path: joint1/joint6/joint13
+        weight: 1
+      - path: joint1/joint6/joint13/joint14
+        weight: 1
+      - path: joint1/joint6/joint13/joint14/joint17
+        weight: 1
+      - path: Legs
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []

@@ -40,12 +40,13 @@ namespace Model
 	    {
 		    var bearing = GetBearing();
 		    if (float.IsNaN(bearing)) return null;
-		    var dir = (int) (bearing + 30) % 360 / 60;	// round to nearest int from 0-5
+		    var dir = (int) (bearing + 30) % 360 / 60;	// round to nearest int from 0-5	    
 		    return (CardinalDirection) dir;
 	    }
 
 	    public CardinalDirection? GetApproximateDirectionTo(TileVector other)
 	    {
+		    Utils.Printf("FROM: {0} TO: {1} DIR: {2}", this, other, (other - this).GetApproximateDirection());
 		    return (other - this).GetApproximateDirection();
 	    }
 
@@ -55,6 +56,7 @@ namespace Model
 		    var angleSum = 0;
 		    angleSum += CardinalDirection.Southwest.GetBearing() * W;
 		    angleSum += CardinalDirection.Southeast.GetBearing() * E;
+		    if (angleSum < 0) angleSum = 360 - angleSum;
 		    return (float) angleSum / (W + E) % 360;
 	    }
 
