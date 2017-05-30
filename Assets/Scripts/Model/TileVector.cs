@@ -89,6 +89,11 @@ namespace Model
 		    return new TileVector(-a.W, -a.W);
 	    }
 
+	    public static TileVector operator *(TileVector a, int b)
+	    {
+		    return new TileVector(a.W*b, a.E*b);
+	    }
+
 	    public static bool operator ==(TileVector a, TileVector b)
 	    {
 		    return a.Equals(b);
