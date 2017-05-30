@@ -12,11 +12,15 @@ public class PreWorldGen : MonoBehaviour {
     private WorldController _worldController;
     public GameObject[] HexModels;
     private List<GameObject> _hexInstances = new List<GameObject>();
+    private GameObject[] instancedTiles;
 
     void Awake () {
         int map = Random.Range(0, NumberOfMaps);
-        var world = new World(map, MapSize);
+        var world = new World(map);
         _worldController = new WorldController(world);
+        int numberOfObjects = world.E * world.W;
+        instancedTiles = new GameObject[numberOfObjects];
+        CleanWorld();
         RenderWorld(world);
     }
 	
@@ -36,8 +40,18 @@ public class PreWorldGen : MonoBehaviour {
                     var tile = Instantiate(HexModels[(int)hex.Type]);
                     tile.transform.position = new TileVector(w, e).ToVector3();
                     _hexInstances.Add(tile);
+                    Debug.Log(tile.ToString() + w + e);
                 }
             }
+        }
+    }
+    private void CleanWorld()
+    {
+        foreach(GameObject obj in _hexInstances)
+        {
+            Debug.Log(obj.ToString());
+            Destroy(obj);
+            
         }
     }
 }

@@ -59,7 +59,7 @@ namespace Model
             }
         }
 
-        public World(int map, int mapsize)
+        /*public World(int map, int mapsize)
         {
             W = mapsize;
             E = mapsize;
@@ -90,7 +90,7 @@ namespace Model
                 }
                 i++;
             }
-        }
+        }*/
 
 
         public Hex this[TileVector pos]

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -421,10 +421,10 @@ MonoBehaviour:
   - {fileID: 100016, guid: 5ccf83df7dfdc8e4db9814e44e8f843d, type: 3}
   - {fileID: 100016, guid: 6e7965859e94d4f43a02aa43f2c60dfc, type: 3}
   UnitCount: 3
-  mapsize: 20
-  numberOfMaps: 2
-  player_1_Unit_Color: {r: 1, g: 0, b: 0, a: 1}
-  player_2_Unit_Color: {r: 0, g: 0, b: 1, a: 1}
+  MapSize: 20
+  NumberOfMaps: 1
+  Player1Color: {r: 1, g: 0, b: 0, a: 1}
+  Player2Color: {r: 0, g: 0, b: 1, a: 1}
 --- !u!4 &1628286510
 Transform:
   m_ObjectHideFlags: 0
@@ -532,6 +532,52 @@ Transform:
   m_PrefabParentObject: {fileID: 4802398446864252, guid: 79dfd88eae4a7469184d19d0dd7ae081,
     type: 2}
   m_PrefabInternal: {fileID: 197591403}
+--- !u!1 &2026539734
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 2026539736}
+  - component: {fileID: 2026539735}
+  m_Layer: 0
+  m_Name: PreWorld
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2026539735
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2026539734}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b12959a7ca671d448d0a12ad1bae8c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NumberOfMaps: 1
+  MapSize: 20
+  HexModels:
+  - {fileID: 100002, guid: 7471a8ff2e3b9c142b6f629ebae1f069, type: 3}
+  - {fileID: 100016, guid: 5ccf83df7dfdc8e4db9814e44e8f843d, type: 3}
+  - {fileID: 100016, guid: 6e7965859e94d4f43a02aa43f2c60dfc, type: 3}
+--- !u!4 &2026539736
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2026539734}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.9282286, y: -14.075987, z: -0.95684433}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2092828271
 GameObject:
   m_ObjectHideFlags: 0
