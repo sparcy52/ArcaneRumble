@@ -36,12 +36,6 @@ public class GameController : MonoBehaviour
 		RenderWorld(world);
 		Players[0] = new Player(1);
 		Players[1] = new Player(2);
-
-		for (var i = 0; i < UnitCount; i++)
-		{
-			var pos = i % 2 == 0 ? new TileVector(i, 0) : new TileVector(0, i);
-			MakeUnit(TestUnits[i%TestUnits.Length], pos, CardinalDirection.North, Players[i%2]);
-		}
 	}
 
 	private void Update()
@@ -96,7 +90,7 @@ public class GameController : MonoBehaviour
 			
 		Unit unit = new Unit(avatar, pos, dir, owner);
 		owner.AddUnit (unit);
-		avatar.SetPositionAndOrientation(pos, dir);
+		avatar.SetUnit(unit);
 
 		if (!_worldController.AddUnit(unit))	// oops! bad unit placement, so delete the unit as if nothing happened
 		{
