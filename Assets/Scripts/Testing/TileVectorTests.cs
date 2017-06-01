@@ -103,10 +103,11 @@ namespace Testing
 			for (var i = 0; i < 3; i++)
 			{
 				Assert.AreEqual(expected, v.GetApproximateDirection().Value, 
-					"v={0} @{1}°", v.ToString(), v.GetBearing());
+					//"v={0} @{1}°", v.ToString());
+					"v={0}", v.ToString());
 				v *= 2;
 			}
-			Assert.Pass(v.GetBearing() + "°");
+			//Assert.Pass(v.GetBearing() + "°");
 		}
 	}
 }
