@@ -4,13 +4,10 @@ using Model;
 
 public class GameController : MonoBehaviour
 {
-	public GameObject[] TestUnits;
 
 	public GameObject[] HexModels;
 	private List<GameObject> _hexInstances = new List<GameObject>();
-
-	public int UnitCount = 3;
-
+	
 	public Player[] Players = new Player[2];
 
     public int MapSize = 20;
@@ -21,8 +18,6 @@ public class GameController : MonoBehaviour
 	public Color Player1Color = Color.red;		//player 1's unit color
 	public Color Player2Color = Color.blue;		//player 2's unit color
 
-	private GameObject go;
-
 	public void DoTurn()
 	{
 		_worldController.DoTurn();
@@ -31,7 +26,7 @@ public class GameController : MonoBehaviour
 	private void Start()
 	{
         int map = Random.Range(0, NumberOfMaps);
-		var world = new World(map, MapSize);
+		var world = new World(map);
 		_worldController = new WorldController(world);
 		RenderWorld(world);
 		Players[0] = new Player(1);

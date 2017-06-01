@@ -23,6 +23,42 @@ namespace Model
 				}
 			}
 		}*/
+        public World(int map)
+        {
+            
+            String filename = "map" + map + ".txt";
+            StreamReader reader = File.OpenText(filename);
+            string line;
+            int i = 0;
+            line = reader.ReadLine();
+            String[] mapsize = line.Split('\t');
+            W = int.Parse(mapsize[0]);
+            E = int.Parse(mapsize[1]);
+            _terrain = new Hex[W, E];
+            while ((line = reader.ReadLine()) != null)
+            {
+                //just hextype
+                string[] mapline = line.Split('\t');
+                for (int j = 0; j < mapline.Length; j++)
+                {
+                    if (mapline[j] == "-")
+                    {
+                        //Do nothing
+                    }
+                    else if (mapline[j] == "o")
+                    {
+                        _terrain[i, j] = new Hex(HexType.Dirt, 1);
+                    }
+                    else
+                    {
+                        HexType type = (HexType)int.Parse(mapline[j]);
+                        _terrain[i, j] = new Hex(type);
+                    }
+                }
+                i++;
+            }
+        }
+
         public World(int map, int mapsize)
         {
             W = mapsize;
