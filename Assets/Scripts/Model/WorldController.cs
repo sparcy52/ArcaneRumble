@@ -75,7 +75,8 @@ namespace Model
 					var resolver = new MoveResolver(move); // wrap so we can easily solve complex dependencies
 					moveOrigins.Add(move.Unit.Position, resolver); // register move origin
 
-					if (plan.IsActive() && _world[move.Destination] != null) // verify move is legal
+					var hex = _world[move.Destination];
+					if (plan.IsActive() && hex != null && !hex.Impassable) // verify move is legal
 					{
 						List<MoveResolver> movesToDestination;
 						if (moveDestinations.ContainsKey(move.Destination))
