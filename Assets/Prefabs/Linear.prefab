@@ -694,7 +694,7 @@ GameObject:
   - component: {fileID: 95283664493555356}
   - component: {fileID: 114079439508976484}
   m_Layer: 0
-  m_Name: RightWalkler
+  m_Name: Linear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2247,8 +2247,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b573f884c323fa844be5f5283002b637, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHealth: 2
+  MaxHealth: 4
   MaxEnergy: 5
-  Ai: {fileID: 11400000, guid: a5585f178ef5af84b85f5db0d3ace029, type: 2}
+  Ai: {fileID: 11400000, guid: 2b37fd886f048174580efc28ca69ba4a, type: 2}
   MoveSpeed: 5
   TurnSpeed: 180

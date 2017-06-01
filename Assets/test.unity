@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641263, b: 0.57481706, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -370,8 +370,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Units:
-  - {fileID: 1410274239001416, guid: cc76582e1d8a22f4f8b7308fabcaea91, type: 2}
+  - {fileID: 1253763432625174, guid: ce46b31ffd296a242960ccf834aa932a, type: 2}
   - {fileID: 1939822075530332, guid: 87d239aff0ebdc74d913fb3783c3cd45, type: 2}
+  - {fileID: 1410274239001416, guid: cc76582e1d8a22f4f8b7308fabcaea91, type: 2}
   gameController: {fileID: 1628286509}
 --- !u!4 &1590988313
 Transform:
@@ -414,17 +415,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1a9a2bcb0cc48579a76e97c1d50859e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TestUnits:
-  - {fileID: 1410274239001416, guid: cc76582e1d8a22f4f8b7308fabcaea91, type: 2}
   HexModels:
   - {fileID: 100002, guid: 7471a8ff2e3b9c142b6f629ebae1f069, type: 3}
   - {fileID: 100016, guid: 5ccf83df7dfdc8e4db9814e44e8f843d, type: 3}
   - {fileID: 100016, guid: 6e7965859e94d4f43a02aa43f2c60dfc, type: 3}
-  UnitCount: 3
-  mapsize: 20
-  numberOfMaps: 2
-  player_1_Unit_Color: {r: 1, g: 0, b: 0, a: 1}
-  player_2_Unit_Color: {r: 0, g: 0, b: 1, a: 1}
+  MapSize: 20
+  NumberOfMaps: 1
+  Player1Color: {r: 1, g: 0, b: 0, a: 1}
+  Player2Color: {r: 0, g: 0, b: 1, a: 1}
 --- !u!4 &1628286510
 Transform:
   m_ObjectHideFlags: 0
