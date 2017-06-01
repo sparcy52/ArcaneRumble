@@ -9,7 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dde57d5db5b2c844badec70a5f2c769a, type: 3}
-  m_Name: FollowThingsAi
+  m_Name: FollowEnemiesAi
   m_EditorClassIdentifier: 
   FollowEnemies: 0
   FollowObjectives: 0

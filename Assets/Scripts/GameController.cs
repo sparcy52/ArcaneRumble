@@ -6,7 +6,6 @@ public class GameController : MonoBehaviour
 {
 
 	public GameObject[] HexModels;
-	private List<GameObject> _hexInstances = new List<GameObject>();
 	
 	public Player[] Players = new Player[2];
 
@@ -34,8 +33,6 @@ public class GameController : MonoBehaviour
         int map = Random.Range(0, NumberOfMaps);
 		var world = new World(map, Players);
 		_worldController = new WorldController(world);
-		CleanWorld();
-		RenderWorld(world);
     
 		Players[0] = new Player(1);
 		Players[1] = new Player(2);
@@ -44,32 +41,6 @@ public class GameController : MonoBehaviour
 	private void Update()
 	{
 		if (Input.GetKeyDown(KeyCode.Z)) DoTurn();
-	}
-
-	private void RenderWorld(World world)
-	{
-		for (var w = 0; w < world.W; w++)
-		{
-			for (var e = 0; e < world.E; e++)
-			{
-				var hex = world[w, e];
-				if (hex != null)
-				{
-					var tile = Instantiate(HexModels[(int) hex.Type]);
-					tile.transform.position = new TileVector(w, e).ToVector3();
-					_hexInstances.Add(tile);
-				}
-			}
-		}
-	}
-	private void CleanWorld()
-	{
-		if (instancedTiles == null) {
-			instancedTiles = GameObject.FindGameObjectsWithTag ("EditorTile");
-		}
-		foreach (GameObject tile in instancedTiles) {
-			DestroyImmediate (tile);
-		}
 	}
 
 	/// <summary>
@@ -111,4 +82,32 @@ public class GameController : MonoBehaviour
 		}
 		else return true;
 	}
+	
+	/*
+	private void RenderWorld(World world)
+	{
+		for (var w = 0; w < world.W; w++)
+		{
+			for (var e = 0; e < world.E; e++)
+			{
+				var hex = world[w, e];
+				if (hex != null)
+				{
+					var tile = Instantiate(HexModels[(int) hex.Type]);
+					tile.transform.position = new TileVector(w, e).ToVector3();
+					_hexInstances.Add(tile);
+				}
+			}
+		}
+	}
+	private void CleanWorld()
+	{
+		if (instancedTiles == null) {
+			instancedTiles = GameObject.FindGameObjectsWithTag ("EditorTile");
+		}
+		foreach (GameObject tile in instancedTiles) {
+			DestroyImmediate (tile);
+		}
+	}
+	*/
 }
