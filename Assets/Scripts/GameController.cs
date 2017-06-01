@@ -4,13 +4,10 @@ using Model;
 
 public class GameController : MonoBehaviour
 {
-	public GameObject[] TestUnits;
 
 	public GameObject[] HexModels;
 	private List<GameObject> _hexInstances = new List<GameObject>();
-
-	public int UnitCount = 3;
-
+	
 	public Player[] Players = new Player[2];
 
     public int MapSize = 20;
@@ -39,13 +36,9 @@ public class GameController : MonoBehaviour
 		_worldController = new WorldController(world);
 		CleanWorld();
 		RenderWorld(world);
-		
-
-		for (var i = 0; i < UnitCount; i++)
-		{
-			var pos = i % 2 == 0 ? new TileVector(i, 0) : new TileVector(0, i);
-			MakeUnit(TestUnits[i%TestUnits.Length], pos, CardinalDirection.North, Players[i%2]);
-		}
+    
+		Players[0] = new Player(1);
+		Players[1] = new Player(2);
 	}
 
 	private void Update()
