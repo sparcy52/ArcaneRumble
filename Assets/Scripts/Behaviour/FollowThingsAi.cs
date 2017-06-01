@@ -70,9 +70,9 @@ public class FollowThingsPlan : TurnPlan
 					hasTarget = true;
 				}
 				
-				if(h.objective != null)
+				if(h.Objective != null)
 				{
-					hasTarget = ShouldFollowObjective(h.objective);
+					hasTarget = ShouldFollowObjective(h.Objective);
 				}
 
 				if (hasTarget)
@@ -99,7 +99,7 @@ public class FollowThingsPlan : TurnPlan
 		if (_parent.FollowEnemies) {
 			_unitTarget = World [closestTargetPos.Value.W, closestTargetPos.Value.E].Occupant;
 		} else {
-			_objectiveTarget = World [closestTargetPos.Value.W, closestTargetPos.Value.E].objective;
+			_objectiveTarget = World [closestTargetPos.Value.W, closestTargetPos.Value.E].Objective;
 			_objectivePos = closestTargetPos.Value;
 		}
 	}
