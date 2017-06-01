@@ -9,16 +9,16 @@ public class PreWorldGen : MonoBehaviour {
     
     public int NumberOfMaps = 1;
     public int MapSize = 20;
-    private WorldController _worldController;
     public GameObject[] HexModels;
     private List<GameObject> _hexInstances = new List<GameObject>();
     private GameObject[] instancedTiles;
+    public Player[] TempPlayers = new Player[2];
 
-    void Awake () {
+    void Start () {
+        TempPlayers[0] = new Player(1);
+        TempPlayers[1] = new Player(2);
         int map = Random.Range(0, NumberOfMaps);
-        var world = new World(map);
-        _worldController = new WorldController(world);
-        int numberOfObjects = world.E * world.W;
+        var world = new World(map, TempPlayers);
         CleanWorld();
         RenderWorld(world);
     }
