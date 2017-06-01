@@ -26,7 +26,7 @@ namespace Model
 		public bool AddUnit(Unit newUnit)
 		{
 			var hex = _world[newUnit.Position];
-			if (hex != null && hex.Occupant == null)
+			if (isHexPlaceable(newUnit.Owner, hex))
 			{
 				hex.Occupant = newUnit;
 				_units.Add(newUnit);
@@ -34,11 +34,22 @@ namespace Model
 			}
 			else return false;
 		}
+        public bool isHexPlaceable(Player player, Hex hex)
+        {
+            if (hex.Placeable && hex.Owner == player && hex != null && hex.Occupant == null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
-		/// <summary>
-		/// Simulate the game for a single turn.
-		/// </summary>
-		public void DoTurn()
+        /// <summary>
+        /// Simulate the game for a single turn.
+        /// </summary>
+        public void DoTurn()
 		{
 			var activeUnits = new List<Unit>(_units);
 			var turnPlans = new Dictionary<Unit, TurnPlan>();
@@ -247,6 +258,8 @@ namespace Model
 					dependent.SetRoot(root);
 				}
 			}
+
+           
 		}
 	}
 

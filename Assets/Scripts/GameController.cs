@@ -18,6 +18,10 @@ public class GameController : MonoBehaviour
 	public Color Player1Color = Color.red;		//player 1's unit color
 	public Color Player2Color = Color.blue;		//player 2's unit color
 
+	private GameObject go;
+
+	private GameObject[] instancedTiles;
+
 	public void DoTurn()
 	{
 		_worldController.DoTurn();
@@ -25,10 +29,14 @@ public class GameController : MonoBehaviour
 	
 	private void Start()
 	{
+        Players[0] = new Player(1);
+        Players[1] = new Player(2);
         int map = Random.Range(0, NumberOfMaps);
-		var world = new World(map);
+		var world = new World(map, Players);
 		_worldController = new WorldController(world);
+		CleanWorld();
 		RenderWorld(world);
+    
 		Players[0] = new Player(1);
 		Players[1] = new Player(2);
 	}
@@ -52,6 +60,15 @@ public class GameController : MonoBehaviour
 					_hexInstances.Add(tile);
 				}
 			}
+		}
+	}
+	private void CleanWorld()
+	{
+		if (instancedTiles == null) {
+			instancedTiles = GameObject.FindGameObjectsWithTag ("EditorTile");
+		}
+		foreach (GameObject tile in instancedTiles) {
+			DestroyImmediate (tile);
 		}
 	}
 
