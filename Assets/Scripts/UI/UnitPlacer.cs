@@ -4,17 +4,15 @@ using UnityEngine;
 using Model;
 using UnityEngine.UI;
 
-public class UnitPlacer2 : MonoBehaviour {
+public class UnitPlacer : MonoBehaviour {
 
 	public GameObject[] Units;
 	public GameController gameController;
 	private GameObject go;
 	private bool lockInHex = false;
 
-	public GUISkin customSkin1;
-
 	private int currentPlayer = 0;
-
+	
 	Transform _t;
 	TileVector _pos = new TileVector(0,0);
 	CardinalDirection _facing = CardinalDirection.North;
@@ -23,26 +21,29 @@ public class UnitPlacer2 : MonoBehaviour {
 	void Start () {
 		_t = GetComponent<Transform> ();
 	}
-
+	
 	// Update is called once per frame
 	void Update () {
+//
+//		Buttons = Buttons.GetComponent<Button>();
+//		Buttons.onClick.AddListener(SelectUnit);
 
 		if (lockInHex == false) {
-			if (Input.GetKeyDown (KeyCode.P))
+			if (Input.GetKeyDown (KeyCode.W))
 				MovePos (CardinalDirection.North);
-			if (Input.GetKeyDown (KeyCode.Semicolon))
+			if (Input.GetKeyDown (KeyCode.S))
 				MovePos (CardinalDirection.South);
-			if (Input.GetKeyDown (KeyCode.L))
+			if (Input.GetKeyDown (KeyCode.A))
 				MovePos (CardinalDirection.Southwest);
-			if (Input.GetKeyDown (KeyCode.Quote))
+			if (Input.GetKeyDown (KeyCode.D))
 				MovePos (CardinalDirection.Southeast);
-			if (Input.GetKeyDown (KeyCode.O))
+			if (Input.GetKeyDown (KeyCode.Q))
 				MovePos (CardinalDirection.Northwest);
-			if (Input.GetKeyDown (KeyCode.LeftBracket))
+			if (Input.GetKeyDown (KeyCode.E))
 				MovePos (CardinalDirection.Northeast);
 		}
 
-		if (Input.GetKeyDown(KeyCode.Return)) {
+		if (Input.GetKeyDown(KeyCode.Space)) {
 			lockInHex = !lockInHex;
 		}
 
@@ -50,22 +51,23 @@ public class UnitPlacer2 : MonoBehaviour {
 			lockInHex = false;
 		}
 
-		//		if (lockInHex == true && SelectedUnit != null) {
-		//			if (Input.GetKeyDown(KeyCode.S)) {
-		//				
-		//			} else if (Input.GetKeyUp(KeyCode.W)) {
-		//				
-		//			}
-		//		}
+//		if (lockInHex == true && SelectedUnit != null) {
+//			if (Input.GetKeyDown(KeyCode.S)) {
+//				
+//			} else if (Input.GetKeyUp(KeyCode.W)) {
+//				
+//			}
+//		}
 
 	}
 
-	void OnGui(){
-		GUI.skin = customSkin1;
-
+	void OnGUI(){
+		if (GUI.Button (new Rect (Screen.width / 2.5f, Screen.height / 20, 120, 30), "Start")) {
+			Debug.Log ("Start button is pressed");
+		}
 		for (int i = 0; i < Units.Length; i++) {
-			if (lockInHex == true && GUI.Button (new Rect (Screen.width / 1.25f, Screen.height / 20 + Screen.height / 8.5f * i, 100, 25), Units [i].name)) {
-				PlaceMech (Units[i]);
+			if (lockInHex == true && GUI.Button (new Rect (Screen.width / 20, Screen.height / 20 + Screen.height / 8.5f * i, 100, 25), Units [i].name)) {
+					PlaceMech (Units[i]);
 			}
 
 		}
@@ -87,5 +89,7 @@ public class UnitPlacer2 : MonoBehaviour {
 			if (currentPlayer == 0) gameController.DoTurn();
 		}
 	}
+
+
 
 }
