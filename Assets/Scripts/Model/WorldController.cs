@@ -35,6 +35,7 @@ namespace Model
 			else return false;
 		}
 
+
 		/// <summary>
 		/// Simulate the game for a single turn.
 		/// </summary>

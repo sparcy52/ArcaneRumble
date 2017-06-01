@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 2c4152148f53d4e4c890f35dffe8a376
+timeCreated: 1496108366
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Bulletproof BB
+  fontNames:
+  - Bulletproof BB
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
