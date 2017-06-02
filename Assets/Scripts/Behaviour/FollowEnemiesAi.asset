@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dde57d5db5b2c844badec70a5f2c769a, type: 3}
+  m_Name: FollowEnemiesAi
+  m_EditorClassIdentifier: 
+  FollowEnemies: 0
+  FollowObjectives: 0
+  DefendObjectives: 0
+  AttackObjectives: 0

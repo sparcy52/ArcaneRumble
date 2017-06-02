@@ -126,6 +126,7 @@ public class UnitPlacer1 : MonoBehaviour {
 		if (gameController.MakeUnit(GameUnit, _pos, _facing, gameController.Players[0]))
 		{
 //			currentPlayer = (currentPlayer + 1) % gameController.Players.Length;
+			print("wah");
 			if (currentPlayer == 0) gameController.DoTurn();
 		}
 	}
