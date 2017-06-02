@@ -73,10 +73,11 @@ public class GameController : MonoBehaviour
 			
 		Unit unit = new Unit(avatar, pos, dir, owner);
 		owner.AddUnit (unit);
-		avatar.SetPositionAndOrientation(pos, dir);
+		avatar.SetUnit(unit);
 
 		if (!_worldController.AddUnit(unit))	// oops! bad unit placement, so delete the unit as if nothing happened
 		{
+			Utils.Print("hii");
 			Destroy(avatar.gameObject);
 			return false;
 		}

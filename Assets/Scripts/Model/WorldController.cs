@@ -25,6 +25,7 @@ namespace Model
 		/// <returns>true if the unit was successfully inserted</returns>
 		public bool AddUnit(Unit newUnit)
 		{
+			Utils.Print("aa");
 			var hex = _world[newUnit.Position];
 			if (isHexPlaceable(newUnit.Owner, hex))
 			{
@@ -34,9 +35,11 @@ namespace Model
 			}
 			else return false;
 		}
+		
         public bool isHexPlaceable(Player player, Hex hex)
         {
-            if (hex.Placeable && hex.Owner == player && hex != null && hex.Occupant == null)
+            //if (hex != null && hex.Placeable && hex.Owner == player && hex.Occupant == null)
+            if (hex != null && hex.Occupant == null)
             {
                 return true;
             }
