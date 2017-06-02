@@ -36,10 +36,11 @@ public class PreWorldGen : MonoBehaviour {
                 var hex = world[w, e];
                 if (hex != null)
                 {
-                    var tile = Instantiate(HexModels[(int)hex.Type]);
+                    var tile = Instantiate(HexModels[(int)hex.Type], this.transform, true);
+                    tile.tag = "Tile";
                     tile.transform.position = new TileVector(w, e).ToVector3();
                     _hexInstances.Add(tile);
-                //    Debug.Log(tile.ToString() + w + e);
+                    // Debug.Log(tile.ToString() + w + e);
                 }
             }
         }
@@ -47,7 +48,7 @@ public class PreWorldGen : MonoBehaviour {
     private void CleanWorld()
     {
 		if (instancedTiles == null) {
-			instancedTiles = GameObject.FindGameObjectsWithTag ("EditorTile");
+			instancedTiles = GameObject.FindGameObjectsWithTag ("Tile");
 		}
 		foreach (GameObject tile in instancedTiles) {
 			DestroyImmediate (tile);
