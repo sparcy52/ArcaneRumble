@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Model;
+using Random = UnityEngine.Random;
 
 public class GameController : MonoBehaviour
 {
@@ -40,7 +42,7 @@ public class GameController : MonoBehaviour
 
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.Z)) DoTurn();
+		if (Input.GetKeyDown(KeyCode.BackQuote)) DoTurn();
 	}
 
 	/// <summary>
@@ -57,10 +59,10 @@ public class GameController : MonoBehaviour
 	{
 		UnitAvatar avatar = Instantiate(unitPrefab).GetComponent<UnitAvatar>();
 
-		Renderer[] rend = avatar.gameObject.GetComponentsInChildren<MeshRenderer>();
+		var rend = avatar.gameObject.GetComponentsInChildren<MeshRenderer>();
 
-		foreach (Renderer r in rend) {
-			foreach (Material m in r.materials) {
+		foreach (var r in rend) {
+			foreach (var m in r.materials) {
 				if (m.HasProperty ("_Color")) {
 					if (owner.num == 1) {
 						m.color = Player1Color;
