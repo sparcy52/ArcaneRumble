@@ -6,7 +6,6 @@ public class GameController : MonoBehaviour
 {
 
 	public GameObject[] HexModels;
-	private List<GameObject> _hexInstances = new List<GameObject>();
 	
 	public Player[] Players = new Player[2];
 
@@ -18,6 +17,10 @@ public class GameController : MonoBehaviour
 	public Color Player1Color = Color.red;		//player 1's unit color
 	public Color Player2Color = Color.blue;		//player 2's unit color
 
+	private GameObject go;
+
+	private GameObject[] instancedTiles;
+
 	public void DoTurn()
 	{
 		_worldController.DoTurn();
@@ -25,10 +28,12 @@ public class GameController : MonoBehaviour
 	
 	private void Start()
 	{
+        Players[0] = new Player(1);
+        Players[1] = new Player(2);
         int map = Random.Range(0, NumberOfMaps);
-		var world = new World(map);
+		var world = new World(map, Players);
 		_worldController = new WorldController(world);
-		RenderWorld(world);
+    
 		Players[0] = new Player(1);
 		Players[1] = new Player(2);
 	}
@@ -36,23 +41,6 @@ public class GameController : MonoBehaviour
 	private void Update()
 	{
 		if (Input.GetKeyDown(KeyCode.Z)) DoTurn();
-	}
-
-	private void RenderWorld(World world)
-	{
-		for (var w = 0; w < world.W; w++)
-		{
-			for (var e = 0; e < world.E; e++)
-			{
-				var hex = world[w, e];
-				if (hex != null)
-				{
-					var tile = Instantiate(HexModels[(int) hex.Type]);
-					tile.transform.position = new TileVector(w, e).ToVector3();
-					_hexInstances.Add(tile);
-				}
-			}
-		}
 	}
 
 	/// <summary>
@@ -85,13 +73,42 @@ public class GameController : MonoBehaviour
 			
 		Unit unit = new Unit(avatar, pos, dir, owner);
 		owner.AddUnit (unit);
-		avatar.SetPositionAndOrientation(pos, dir);
+		avatar.SetUnit(unit);
 
 		if (!_worldController.AddUnit(unit))	// oops! bad unit placement, so delete the unit as if nothing happened
 		{
+			Utils.Print("hii");
 			Destroy(avatar.gameObject);
 			return false;
 		}
 		else return true;
 	}
+	
+	/*
+	private void RenderWorld(World world)
+	{
+		for (var w = 0; w < world.W; w++)
+		{
+			for (var e = 0; e < world.E; e++)
+			{
+				var hex = world[w, e];
+				if (hex != null)
+				{
+					var tile = Instantiate(HexModels[(int) hex.Type]);
+					tile.transform.position = new TileVector(w, e).ToVector3();
+					_hexInstances.Add(tile);
+				}
+			}
+		}
+	}
+	private void CleanWorld()
+	{
+		if (instancedTiles == null) {
+			instancedTiles = GameObject.FindGameObjectsWithTag ("EditorTile");
+		}
+		foreach (GameObject tile in instancedTiles) {
+			DestroyImmediate (tile);
+		}
+	}
+	*/
 }

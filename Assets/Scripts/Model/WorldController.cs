@@ -25,8 +25,9 @@ namespace Model
 		/// <returns>true if the unit was successfully inserted</returns>
 		public bool AddUnit(Unit newUnit)
 		{
+			Utils.Print("aa");
 			var hex = _world[newUnit.Position];
-			if (hex != null && hex.Occupant == null)
+			if (isHexPlaceable(newUnit.Owner, hex))
 			{
 				hex.Occupant = newUnit;
 				_units.Add(newUnit);
@@ -34,11 +35,24 @@ namespace Model
 			}
 			else return false;
 		}
+		
+        public bool isHexPlaceable(Player player, Hex hex)
+        {
+            //if (hex != null && hex.Placeable && hex.Owner == player && hex.Occupant == null)
+            if (hex != null && hex.Occupant == null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
-		/// <summary>
-		/// Simulate the game for a single turn.
-		/// </summary>
-		public void DoTurn()
+        /// <summary>
+        /// Simulate the game for a single turn.
+        /// </summary>
+        public void DoTurn()
 		{
 			var activeUnits = new List<Unit>(_units);
 			var turnPlans = new Dictionary<Unit, TurnPlan>();
@@ -64,7 +78,8 @@ namespace Model
 					var resolver = new MoveResolver(move); // wrap so we can easily solve complex dependencies
 					moveOrigins.Add(move.Unit.Position, resolver); // register move origin
 
-					if (plan.IsActive() && _world[move.Destination] != null) // verify move is legal
+					var hex = _world[move.Destination];
+					if (plan.IsActive() && hex != null && !hex.Impassable) // verify move is legal
 					{
 						List<MoveResolver> movesToDestination;
 						if (moveDestinations.ContainsKey(move.Destination))
@@ -247,6 +262,8 @@ namespace Model
 					dependent.SetRoot(root);
 				}
 			}
+
+           
 		}
 	}
 
