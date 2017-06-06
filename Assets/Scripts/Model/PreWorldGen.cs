@@ -1,24 +1,24 @@
-﻿using Model;
+﻿using System;
+using Model;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [ExecuteInEditMode]
 public class PreWorldGen : MonoBehaviour {
 
-    
+    public GameController GameController;
     public int NumberOfMaps = 1;
     public int MapSize = 20;
     public GameObject[] HexModels;
     private List<GameObject> _hexInstances = new List<GameObject>();
     private GameObject[] instancedTiles;
-    public Player[] TempPlayers = new Player[2];
 
     void Start () {
-        TempPlayers[0] = new Player(1);
-        TempPlayers[1] = new Player(2);
+        if (GameController == null) throw new Exception("Please link a GameController to the PreWorldGen script");
         int map = Random.Range(0, NumberOfMaps);
-        var world = new World(map, TempPlayers);
+        var world = new World(map, GameController.Players);
         CleanWorld();
         RenderWorld(world);
     }

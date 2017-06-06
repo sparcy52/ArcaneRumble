@@ -25,7 +25,6 @@ namespace Model
 		/// <returns>true if the unit was successfully inserted</returns>
 		public bool AddUnit(Unit newUnit)
 		{
-			Utils.Print("aa");
 			var hex = _world[newUnit.Position];
 			if (isHexPlaceable(newUnit.Owner, hex))
 			{

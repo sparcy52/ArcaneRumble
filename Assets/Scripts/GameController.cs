@@ -13,9 +13,6 @@ public class GameController : MonoBehaviour
 
 	private WorldController _worldController;
 
-	public Color Player1Color = Color.red;		//player 1's unit color
-	public Color Player2Color = Color.blue;		//player 2's unit color
-
 	public void DoTurn()
 	{
 		_worldController.DoTurn();
@@ -23,14 +20,9 @@ public class GameController : MonoBehaviour
 	
 	private void Start()
 	{
-        Players[0] = new Player(1);
-        Players[1] = new Player(2);
         int map = Random.Range(0, NumberOfMaps);
 		var world = new World(map, Players);
 		_worldController = new WorldController(world);
-    
-		Players[0] = new Player(1);
-		Players[1] = new Player(2);
 	}
 
 	private void Update()
@@ -57,22 +49,16 @@ public class GameController : MonoBehaviour
 		foreach (var r in rend) {
 			foreach (var m in r.materials) {
 				if (m.HasProperty ("_Color")) {
-					if (owner.num == 1) {
-						m.color = Player1Color;
-					} else {
-						m.color = Player2Color;
-					}
+					m.color = owner.Color;
 				}
 			}
 		}
 			
 		Unit unit = new Unit(avatar, pos, dir, owner);
-		owner.AddUnit (unit);
 		avatar.SetUnit(unit);
 
 		if (!_worldController.AddUnit(unit))	// oops! bad unit placement, so delete the unit as if nothing happened
 		{
-			Utils.Print("hii");
 			Destroy(avatar.gameObject);
 			return false;
 		}
