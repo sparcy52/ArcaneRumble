@@ -87,6 +87,16 @@ namespace Model
 			return (RelativeDirection) facing.GetArcLinear(other);
 		}
 
+		/// <summary>
+		/// Mirrors a RelativeDirection such that Left switches to Right and vise-versa
+		/// </summary>
+		/// <param name="relative">the RelativeDirection to mirror</param>
+		/// <returns>its mirror</returns>
+		public static RelativeDirection Mirror(this RelativeDirection relative)
+		{
+			return (RelativeDirection) Wrap(-(int) relative);
+		}
+
 
 		// ARC UTILITIES - use these when you need to numerically quantify rotation
 
