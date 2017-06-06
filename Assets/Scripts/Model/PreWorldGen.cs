@@ -36,10 +36,20 @@ public class PreWorldGen : MonoBehaviour {
                 var hex = world[w, e];
                 if (hex != null)
                 {
+
                     var tile = Instantiate(HexModels[(int)hex.Type], this.transform, true);
                     tile.tag = "Tile";
                     tile.transform.position = new TileVector(w, e).ToVector3();
                     _hexInstances.Add(tile);
+                    if(hex.Type == HexType.Objective)
+                    {
+                        tile.GetComponent<DObjective>().setHex(hex);
+                    }
+                    if(hex.Type == HexType.Deploy)
+                    {
+                        tile.GetComponent<Renderer>().material.color = Color.red;
+                        //tile.GetComponent<Renderer>().material.color = hex.Owner.Colour
+                    }
                     // Debug.Log(tile.ToString() + w + e);
                 }
             }
