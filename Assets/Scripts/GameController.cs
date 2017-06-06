@@ -5,10 +5,7 @@ using Model;
 using Random = UnityEngine.Random;
 
 public class GameController : MonoBehaviour
-{
-
-	public GameObject[] HexModels;
-	
+{	
 	public Player[] Players = new Player[2];
 
     public int MapSize = 20;
@@ -18,10 +15,6 @@ public class GameController : MonoBehaviour
 
 	public Color Player1Color = Color.red;		//player 1's unit color
 	public Color Player2Color = Color.blue;		//player 2's unit color
-
-	private GameObject go;
-
-	private GameObject[] instancedTiles;
 
 	public void DoTurn()
 	{
