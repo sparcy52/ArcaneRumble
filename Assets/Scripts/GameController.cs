@@ -6,8 +6,9 @@ using Random = UnityEngine.Random;
 
 public class GameController : MonoBehaviour
 {	
+	public WorldGenerator WorldGenerator;
 	public Player[] Players = new Player[2];
-
+	
     public int MapSize = 20;
     public int NumberOfMaps = 1;
 
@@ -20,9 +21,7 @@ public class GameController : MonoBehaviour
 	
 	private void Start()
 	{
-        int map = Random.Range(0, NumberOfMaps);
-		var world = new World(map, Players);
-		_worldController = new WorldController(world);
+		_worldController = new WorldController(WorldGenerator.World);
 	}
 
 	private void Update()
