@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "Assets/NewPlayer")]	// TODO: choose a better folder
-public sealed class Player : ScriptableObject
+public sealed class Player : MonoBehaviour
 {
 	public string Name;
 	public Color Color;
@@ -12,6 +11,3 @@ public sealed class Player : ScriptableObject
 		get { return Loadout.Units; }
 	}
 }
-
-
-
