@@ -10,7 +10,9 @@ public class UnitAvatar : MonoBehaviour
 	public int MaxEnergy;
 
 	private float HpPercent;
+	private float EpPercent;
 	private GameObject _hpBar;
+	private GameObject _eBar;
 	private Unit _unit;
 
 	public UnitAi Ai;
@@ -50,12 +52,20 @@ public class UnitAvatar : MonoBehaviour
 	void Update () {
 		if (_unit == null) return;
 		HpPercent = _unit.Health / _unit.MaxHealth;
-		_hpBar.transform.position = new Vector3 (this.Position.x, this.Position.y+3f, this.Position.z);
+		_hpBar.transform.position = new Vector3 (this.Position.x, this.Position.y+3.2f, this.Position.z);
 		SetHpBar (HpPercent);	
+		EpPercent = _unit.Energy / _unit.MaxEnergy;
+		//		Debug.Log (_unit.Energy);
+		_eBar.transform.position = new Vector3 (this.Position.x, this.Position.y+2.8f, this.Position.z);
+		SetEpBar (EpPercent);	
 	}
 
 	public void SetHpBar(float health){
 		_hpBar.transform.localScale = new Vector3 (health,_hpBar.transform.localScale.y,_hpBar.transform.localScale.z);
+	}
+
+	public void SetEpBar(float energy){
+		_eBar.transform.localScale = new Vector3 (energy,_hpBar.transform.localScale.y,_hpBar.transform.localScale.z);
 	}
 
 	public void Kill()
@@ -63,9 +73,10 @@ public class UnitAvatar : MonoBehaviour
 		_kill = true;
 	}
 
-	private void OnDestroy()
-	{
+	void CleanUp(){
+		Destroy(gameObject);
 		Destroy (_hpBar);
+		Destroy (_eBar);
 	}
 
 	void FixedUpdate()
@@ -79,7 +90,7 @@ public class UnitAvatar : MonoBehaviour
 		} 
 		else if (_kill)
 		{
-			Destroy(this.gameObject);
+			CleanUp ();
 		}
 	}
 
@@ -90,6 +101,7 @@ public class UnitAvatar : MonoBehaviour
 		Rotation = unit.Facing.GetBearingRotation();
 		
 		_hpBar = Instantiate(GuiComponents.GetHpBar ());
+		_eBar = Instantiate(GuiComponents.GetEpBar ());
 	}
 
 	public void ApplyMove(Move move)
