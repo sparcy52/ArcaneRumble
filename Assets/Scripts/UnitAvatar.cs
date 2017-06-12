@@ -89,6 +89,17 @@ public class UnitAvatar : MonoBehaviour
 		Position = unit.Position.ToVector3();
 		Rotation = unit.Facing.GetBearingRotation();
 		
+		// paint unit
+		var rend = gameObject.GetComponentsInChildren<MeshRenderer>();
+		foreach (var r in rend) {
+			foreach (var m in r.materials) {
+				if (m.HasProperty ("_Color")) {
+					m.color = _unit.Owner.Color;
+				}
+			}
+		}
+
+		// make hp bar
 		_hpBar = Instantiate(GuiComponents.GetHpBar ());
 	}
 
