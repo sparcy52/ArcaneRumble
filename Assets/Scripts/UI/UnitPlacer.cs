@@ -62,9 +62,9 @@ public class UnitPlacer : MonoBehaviour {
 
 	void OnGUI(){
 		GUI.skin = customSkin1;
-		if (GUI.Button (new Rect (Screen.width / 2.5f, Screen.height / 20, 120, 30), "Start")) {
-			Debug.Log ("Start button is pressed");
-		}
+//		if (GUI.Button (new Rect (Screen.width / 2.5f, Screen.height / 20, 120, 30), "Start")) {
+//			Debug.Log ("Start button is pressed");
+//		}
 		for (int i = 0; i < Units.Length; i++) {
 			if (lockInHex == true && GUI.Button (new Rect (Screen.width / 20, Screen.height / 20 + Screen.height / 8.5f * i, 100, 25), Units [i].name)) {
 					PlaceMech (Units[i]);

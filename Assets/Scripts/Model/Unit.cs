@@ -29,7 +29,7 @@ namespace Model
 		// we might need more, for example, combat modifiers
 
 		// Private fields
-		private readonly UnitAvatar _avatar;	// Unity representation
+		public readonly UnitAvatar _avatar;	// Unity representation
 
 		public Unit (UnitAvatar avatar, TileVector position, CardinalDirection facing, Player owner)
 		{
@@ -101,11 +101,13 @@ namespace Model
 			CardinalDirection? combatDirection = Position.GetApproximateDirectionTo(other.Position);
 			if (!combatDirection.HasValue) throw new Exception();	// could not face other unit - probably same pos
 			Move.Turn(_currentMove, combatDirection.Value.Cross(Facing)).Accept();	// weird call stack
-			
+
+			_avatar.ApplyCombat(other,other.Position);
 			// do combat
 			var startingHealth = this.Health;	// trade energy for health with the other unit
 			this.Health -= other.Energy;		// implementing combat in two halves like this guarantees symmetry
 			other.Energy -= startingHealth;
+
 		}
 	}
 }
