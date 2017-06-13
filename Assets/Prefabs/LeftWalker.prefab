@@ -2283,5 +2283,5 @@ MonoBehaviour:
   MaxHealth: 5
   MaxEnergy: 7
   Ai: {fileID: 11400000, guid: 15fe5964be3209c47abb9b691cbb33a3, type: 2}
-  MoveSpeed: 5
+  MoveSpeed: 2
   TurnSpeed: 180

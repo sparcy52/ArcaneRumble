@@ -29,7 +29,7 @@ namespace Model
 		// we might need more, for example, combat modifiers
 
 		// Private fields
-		private readonly UnitAvatar _avatar;	// Unity representation
+		public readonly UnitAvatar _avatar;	// Unity representation
 
 		public Unit (UnitAvatar avatar, TileVector position, CardinalDirection facing, Player owner)
 		{
@@ -100,9 +100,12 @@ namespace Model
 			// turn to face other unit
 			var combatDirection = Position.GetApproximateDirectionTo(other.Position);
 			if (!combatDirection.HasValue) throw new Exception();	// could not face other unit - probably same pos
+
 			Move.Turn(_currentMove, combatDirection.Value.Cross(Facing)).Accept();	// bit gross, but should be fine
 			
 			if (this.Energy <= 0) return;	// skip combat
+			
+			_avatar.ApplyCombat(other,other.Position);
 			
 			// do combat - deal damage to other unit, lose energy
 			var damage = Math.Min(this.Energy, other.Health); 	// TODO: implement buff mechanics here. 

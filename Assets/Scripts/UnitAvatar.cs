@@ -24,7 +24,7 @@ public class UnitAvatar : MonoBehaviour
 	//public Transform Transform { get; protected set; }
 
 	// Movement state trackers
-	private Queue<MoveAnimation> _moveQueue = new Queue<MoveAnimation>();
+	public Queue<IAnimation> _moveQueue = new Queue<IAnimation>();
 
 	private bool _kill = false;
 
@@ -107,5 +107,11 @@ public class UnitAvatar : MonoBehaviour
 	{
 		if (move.IsHalt()) return;
 		_moveQueue.Enqueue(new MoveAnimation(this, move.Destination, move.Unit.Facing.Turn(move.Direction)));
+	}
+
+	public void ApplyCombat(Unit otherUnit, TileVector attackPosition)
+	{
+		//if (move.IsHalt()) return;
+		_moveQueue.Enqueue(new CombatAnimation(this, otherUnit, attackPosition));
 	}
 }
