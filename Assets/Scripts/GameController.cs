@@ -7,12 +7,14 @@ using Random = UnityEngine.Random;
 public class GameController : MonoBehaviour
 {	
 	public WorldGenerator WorldGenerator;
+	
 	public Player[] Players = new Player[2];
 	private Dictionary<Player, bool> _playerUnitPlaced; // TODO: refactor resource management into Player class
 
     public int MapSize = 20;
     public int NumberOfMaps = 1;
 
+	public int RoundNumber { get { return _worldController.RoundNumber; } }
 	private WorldController _worldController;
 
 	public void DoTurn()

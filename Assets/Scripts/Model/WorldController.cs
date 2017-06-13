@@ -5,8 +5,10 @@ using System.Text;
 
 namespace Model
 {
-	public class WorldController
+	public sealed class WorldController
 	{
+		public int RoundNumber { get; private set; }
+		
 		private World _world;
 		private List<Unit> _units;
 
@@ -26,7 +28,7 @@ namespace Model
 		public bool AddUnit(Unit newUnit)
 		{
 			var hex = _world[newUnit.Position];
-			if (isHexPlaceable(newUnit.Owner, hex))
+			if (IsHexPlaceable(newUnit.Owner, hex))
 			{
 				hex.Occupant = newUnit;
 				_units.Add(newUnit);
@@ -35,7 +37,7 @@ namespace Model
 			else return false;
 		}
 		
-        public bool isHexPlaceable(Player player, Hex hex)
+        public bool IsHexPlaceable(Player player, Hex hex)
         {
             //if (hex != null && hex.Placeable && hex.Owner == player && hex.Occupant == null)
             if (hex != null && hex.Occupant == null)
@@ -195,6 +197,8 @@ namespace Model
 					}
 				}
 			}
+
+			RoundNumber++;
 		}
 
 		private class MoveResolver
