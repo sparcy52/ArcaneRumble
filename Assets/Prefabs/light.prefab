@@ -462,7 +462,7 @@ GameObject:
   - component: {fileID: 95349246497785012}
   - component: {fileID: 114906767466815940}
   m_Layer: 0
-  m_Name: Light
+  m_Name: light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2342,6 +2342,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxHealth: 1
   MaxEnergy: 5
-  Ai: {fileID: 11400000, guid: 0603220bb5a52f045abc687356222217, type: 2}
+  Ai: {fileID: 0}
   MoveSpeed: 6
   TurnSpeed: 220

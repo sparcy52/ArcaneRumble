@@ -37,8 +37,8 @@ namespace Model
 			{
 				_timeout = 0;	// TODO: fix this nasty thing - little hack to prevent infinite loop
 			}
-			ApplyMove(accepted);
 			OnAccept(accepted);
+			ApplyMove(accepted);
 		}
 
 		/// <summary>
@@ -49,8 +49,8 @@ namespace Model
 		/// <param name="replacement">the Move that should be executed in <c>rejected's</c> place</param>
 		public void RejectMove(Move rejected, Move replacement)
 		{
-			ApplyMove(replacement);
 			OnReject(rejected, replacement);
+			ApplyMove(replacement);
 			if (--_timeout == 0)
 			{
 				Utils.Printf("Timed out TurnPlan {0} on move {1}", this, rejected);
@@ -65,7 +65,7 @@ namespace Model
 
 		// SUBCLASS HOOKS
 
-		protected virtual void OnAccept(Move acceted)
+		protected virtual void OnAccept(Move accepted)
 		{
 
 		}
