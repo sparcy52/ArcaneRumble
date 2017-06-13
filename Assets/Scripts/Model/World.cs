@@ -70,6 +70,7 @@ namespace Model
                 }
                 i++;
             }
+			reader.Close ();
         }
 
         /*public World(int map, int mapsize)
