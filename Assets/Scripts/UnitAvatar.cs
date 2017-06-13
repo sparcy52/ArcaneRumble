@@ -9,11 +9,11 @@ public class UnitAvatar : MonoBehaviour
 	public int MaxHealth;
 	public int MaxEnergy;
 
-	private float HpPercent;
-	private float EpPercent;
 	private GameObject _hpBar;
 	private GameObject _eBar;
 	private Unit _unit;
+	private BarScript _hpScript;
+	private BarScript _eScript;
 
 	public UnitAi Ai;
 
@@ -42,6 +42,14 @@ public class UnitAvatar : MonoBehaviour
 		get { return transform.position; }
 	}
 
+	public float HpPercent {
+		get { return (float) _unit.Health / _unit.MaxHealth; }
+	}
+
+	public float EpPercent {
+		get { return (float) _unit.Energy / _unit.MaxEnergy; }
+	}
+
 	protected void Start ()
 	{
 		// IMPLEMENTATION NOTE: defer functionality from Start to SetUnit
@@ -51,22 +59,20 @@ public class UnitAvatar : MonoBehaviour
 	// Update is called once per frame
 	void Update () {
 		if (_unit == null) return;
-		HpPercent = _unit.Health / _unit.MaxHealth * 0.4f;
+//		HpPercent = Mathf.Clamp((float) _unit.Health / _unit.MaxHealth,0f ,1f);
+		Debug.Log ("current health: "+_unit.Health);
+		Debug.Log ("Max health: "+_unit.MaxHealth);
+		Debug.Log ("Percent: "+HpPercent);
 		_hpBar.transform.position = new Vector3 (this.Position.x, this.Position.y+0.6f, this.Position.z-1f);
-		SetHpBar (HpPercent);	
-		EpPercent = _unit.Energy / _unit.MaxEnergy * 0.4f;
-		//		Debug.Log (_unit.Energy);
+		_hpScript.SetPercent (HpPercent);
+//		Debug.Log (HpPercent);
+//		EpPercent = (float) _unit.Energy / _unit.MaxEnergy;
+//		Debug.Log (_unit.Energy);
 		_eBar.transform.position = new Vector3 (this.Position.x, this.Position.y+0.4f, this.Position.z-1f);
-		SetEpBar (EpPercent);	
+		_eScript.SetPercent (EpPercent);
+
 	}
 
-	public void SetHpBar(float health){
-		_hpBar.transform.localScale = new Vector3 (health,_hpBar.transform.localScale.y,_hpBar.transform.localScale.z);
-	}
-
-	public void SetEpBar(float energy){
-		_eBar.transform.localScale = new Vector3 (energy,_hpBar.transform.localScale.y,_hpBar.transform.localScale.z);
-	}
 
 	public void Kill()
 	{
@@ -91,6 +97,7 @@ public class UnitAvatar : MonoBehaviour
 		else if (_kill)
 		{
 			CleanUp ();
+			Debug.Log ("killed");
 		}
 	}
 
@@ -102,6 +109,8 @@ public class UnitAvatar : MonoBehaviour
 		
 		_hpBar = Instantiate(GuiComponents.GetHpBar ());
 		_eBar = Instantiate(GuiComponents.GetEpBar ());
+		_hpScript =	_hpBar.GetComponent<BarScript> ();
+		_eScript =	_eBar.GetComponent<BarScript> ();
 	}
 
 	public void ApplyMove(Move move)
