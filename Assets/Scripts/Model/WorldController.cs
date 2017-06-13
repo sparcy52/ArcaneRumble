@@ -177,14 +177,14 @@ namespace Model
 					if (!unit1.IsDead() && !unit2.IsDead())
 					{
 						combat.Apply();
-						
+
 						if (unit1.IsDead())
 						{
 							turnPlans.Remove(unit1);
 							activeUnits.Remove(unit1);
 							_world[unit1.Position].Occupant = null; // NullRef here indicates bad unit position
 							_units.Remove(unit1);
-							unit1.Kill();
+							unit2.Owner.DestroyUnit(unit1);
 						}
 						if (unit2.IsDead())
 						{
@@ -192,7 +192,7 @@ namespace Model
 							activeUnits.Remove(unit2);
 							_world[unit2.Position].Occupant = null; // NullRef here indicates bad unit position
 							_units.Remove(unit2);
-							unit2.Kill();
+							unit1.Owner.DestroyUnit(unit2);
 						}
 					}
 				}
@@ -201,6 +201,7 @@ namespace Model
 			RoundNumber++;
 		}
 
+		
 		private class MoveResolver
 		{
 			public readonly Move Move;
