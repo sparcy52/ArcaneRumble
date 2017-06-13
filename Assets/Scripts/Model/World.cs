@@ -185,7 +185,7 @@ namespace Model
             Owner = player;
 
         }
-        public bool hasObjective()
+        public bool HasObjective()
         {
             if (Objective == null)
             {

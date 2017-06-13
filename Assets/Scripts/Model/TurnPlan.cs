@@ -96,7 +96,14 @@ namespace Model
 				{
 					origin.Occupant = null;
 				}
-				World[move.Destination].Occupant = Unit;
+
+				var destination = World[move.Destination];
+				destination.Occupant = Unit;
+				if (destination.HasObjective())
+				{
+					// TODO: refactor into WorldController for mechanical refinement
+					Unit.Owner.TakeObjective(destination.Objective);
+				}
 			}
 			Unit.ApplyMove(move);
 		}
