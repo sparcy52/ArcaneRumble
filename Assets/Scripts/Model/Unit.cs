@@ -29,7 +29,7 @@ namespace Model
 		// we might need more, for example, combat modifiers
 
 		// Private fields
-		private readonly UnitAvatar _avatar;	// Unity representation
+		public readonly UnitAvatar _avatar;	// Unity representation
 
 		public Unit (UnitAvatar avatar, TileVector position, CardinalDirection facing, Player owner)
 		{
@@ -98,14 +98,19 @@ namespace Model
 			else throw new ArgumentException("Applied combat does not reference this unit");
 
 			// turn to face other unit
-			CardinalDirection? combatDirection = Position.GetApproximateDirectionTo(other.Position);
+			var combatDirection = Position.GetApproximateDirectionTo(other.Position);
 			if (!combatDirection.HasValue) throw new Exception();	// could not face other unit - probably same pos
-			Move.Turn(_currentMove, combatDirection.Value.Cross(Facing)).Accept();	// weird call stack
+
+			Move.Turn(_currentMove, combatDirection.Value.Cross(Facing)).Accept();	// bit gross, but should be fine
 			
-			// do combat
-			var startingHealth = this.Health;	// trade energy for health with the other unit
-			this.Health -= other.Energy;		// implementing combat in two halves like this guarantees symmetry
-			other.Energy -= startingHealth;
+			if (this.Energy <= 0) return;	// skip combat
+			
+			_avatar.ApplyCombat(other,other.Position);
+			
+			// do combat - deal damage to other unit, lose energy
+			var damage = Math.Min(this.Energy, other.Health); 	// TODO: implement buff mechanics here. 
+			other.Health -= damage;			// NB: care should be taken when using this.Health or other.Energy in
+			this.Energy -= damage;			// combat logic, as one side of combat will be resolved before the other.
 		}
 	}
 }

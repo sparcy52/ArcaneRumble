@@ -1,7 +1,7 @@
 ﻿using Model;
 using UnityEngine;
 
-public class MoveAnimation
+public class MoveAnimation : IAnimation
 {
 	// bleed values: as a factor of the unit's speed values
 	private const float RotationMovementBleed = 0.075f;	// when to start moving after rotating

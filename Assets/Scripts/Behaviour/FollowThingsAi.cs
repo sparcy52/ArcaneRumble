@@ -120,7 +120,6 @@ public class FollowThingsPlan : TurnPlan
 				{
 					var dir = Unit.Position.GetApproximateDirectionTo(_unitTarget.Position);
 					if (dir.HasValue) return Turn(dir.Value);
-					Utils.Print("shit");
 					return Halt();
 				}
 				else return Halt();
