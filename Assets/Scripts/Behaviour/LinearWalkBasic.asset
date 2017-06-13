@@ -8,10 +8,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dde57d5db5b2c844badec70a5f2c769a, type: 3}
-  m_Name: FollowEnemiesAi
+  m_Script: {fileID: 11500000, guid: 8ceb8069d0134dc09dfbb74081d143a6, type: 3}
+  m_Name: LinearWalkBasic
   m_EditorClassIdentifier: 
-  FollowEnemies: 1
-  FollowObjectives: 0
-  DefendObjectives: 0
-  AttackObjectives: 0
+  WallBehaviour: 0

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Model;
@@ -9,13 +10,12 @@ public class UnitPlacer : MonoBehaviour {
 	public GUISkin CustomSkin1;
 	
 	public GameController GameController;
-	public int PlayerNum = 0;	// TODO: refine semantics
 	public Player Player;
-	
-	/// <summary>
-	/// List of units availible to this Placer
-	/// </summary>
-	public GameObject[] Units;
+
+	private GameObject[] Units	// shorthand alias
+	{
+		get { return Player.Units; }
+	}
 
 	/// <summary>
 	/// Key bindings to select the units in the array.
@@ -45,15 +45,14 @@ public class UnitPlacer : MonoBehaviour {
 	private CardinalDirection _selectedDir 		= CardinalDirection.North;
 
 	// Use this for initialization
-	void Start () {
+	void Start () 
+	{
 		_t = GetComponent<Transform> ();
-		Player = GameController.Players[PlayerNum];
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		Player = GameController.Players[PlayerNum];	// TODO: remove this hack
-		
+	void Update () 
+	{
 		// MOVEMENT
 		if (Input.GetKeyDown(MoveNorthKey)) 	MovePos(CardinalDirection.North);
 		if (Input.GetKeyDown(MoveNortheastKey)) MovePos(CardinalDirection.Northeast);
@@ -101,5 +100,16 @@ public class UnitPlacer : MonoBehaviour {
 	{
 		_selectedDir = _selectedDir.Turn(direction);
 		_t.rotation = _selectedDir.GetBearingRotation();
+	}
+
+	private void OnValidate()
+	{
+		if (Player == null || UnitSelectionKeys == null) return;
+		if (UnitSelectionKeys.Length < Units.Length)
+		{
+			Debug.LogWarning(
+				string.Format("UnitPlacer {0} does not have enough key binds for Player {1}'s Loadout.", this, Player)
+			);
+		}
 	}
 }

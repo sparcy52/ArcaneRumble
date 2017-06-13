@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using System.Text;
 
 namespace Model
 {
@@ -15,7 +15,7 @@ namespace Model
 			_world = world;
 			_units = new List<Unit>();
 		}
-
+		
 		/// <summary>
 		/// Add a Unit to the game. Note that Unit objects are instantiated alongside UnitAvatars,
 		/// so creation should be done elsewhere, and plug back into here.
@@ -25,7 +25,6 @@ namespace Model
 		/// <returns>true if the unit was successfully inserted</returns>
 		public bool AddUnit(Unit newUnit)
 		{
-			Utils.Print("aa");
 			var hex = _world[newUnit.Position];
 			if (isHexPlaceable(newUnit.Owner, hex))
 			{
@@ -53,7 +52,7 @@ namespace Model
         /// Simulate the game for a single turn.
         /// </summary>
         public void DoTurn()
-		{
+		{	
 			var activeUnits = new List<Unit>(_units);
 			var turnPlans = new Dictionary<Unit, TurnPlan>();
 
@@ -262,9 +261,27 @@ namespace Model
 					dependent.SetRoot(root);
 				}
 			}
-
-           
+		}
+		
+		private int _debugFrameCount = 0;
+	
+		private void DebugLog() {
+			var file = new System.IO.StreamWriter("debug/frame"+_debugFrameCount+++".txt");
+			for (var w = 0; w < _world.W; w++)
+			{
+				var line = new StringBuilder();
+				for (var e = 0; e < _world.E; e++)
+				{
+					var hex = _world[w, e];
+					if (hex != null)
+					{
+						line.Append(hex.Owner != null ? "@" : "_");
+					}
+					else  line.Append(" ");
+				}
+				file.WriteLine(line);
+			}
+			file.Close();
 		}
 	}
-
 }

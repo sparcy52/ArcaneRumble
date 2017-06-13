@@ -8,10 +8,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dde57d5db5b2c844badec70a5f2c769a, type: 3}
-  m_Name: FollowEnemiesAi
+  m_Script: {fileID: 11500000, guid: 2bb7a63bcfd04a6780aaae949194b64b, type: 3}
+  m_Name: ZigzagBasic
   m_EditorClassIdentifier: 
-  FollowEnemies: 1
-  FollowObjectives: 0
-  DefendObjectives: 0
-  AttackObjectives: 0
+  TurnDirection: 4

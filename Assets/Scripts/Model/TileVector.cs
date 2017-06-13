@@ -38,7 +38,7 @@ namespace Model
 	    
 	    public CardinalDirection? GetApproximateDirection()
 	    {
-		    if (W == 0 && E == 0) return null;
+		    if (W == 0 && E == 0) return null;	// zero vector has no direction
 	
 		    // use anon structs to tidy up logic significantly
 		    var w = new {size = Math.Abs(W), dir = W > 0 ? CardinalDirection.Southwest : CardinalDirection.Northeast};
@@ -70,7 +70,6 @@ namespace Model
 
 	    public CardinalDirection? GetApproximateDirectionTo(TileVector other)
 	    {
-		    Utils.Printf("FROM: {0} TO: {1} DIR: {2}", this, other, (other - this).GetApproximateDirection());
 		    return (other - this).GetApproximateDirection();
 	    }
 
