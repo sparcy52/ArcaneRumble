@@ -51,12 +51,12 @@ public class UnitAvatar : MonoBehaviour
 	// Update is called once per frame
 	void Update () {
 		if (_unit == null) return;
-		HpPercent = _unit.Health / _unit.MaxHealth;
-		_hpBar.transform.position = new Vector3 (this.Position.x, this.Position.y+3.2f, this.Position.z);
+		HpPercent = _unit.Health / _unit.MaxHealth * 0.4f;
+		_hpBar.transform.position = new Vector3 (this.Position.x, this.Position.y+0.6f, this.Position.z-1f);
 		SetHpBar (HpPercent);	
-		EpPercent = _unit.Energy / _unit.MaxEnergy;
+		EpPercent = _unit.Energy / _unit.MaxEnergy * 0.4f;
 		//		Debug.Log (_unit.Energy);
-		_eBar.transform.position = new Vector3 (this.Position.x, this.Position.y+2.8f, this.Position.z);
+		_eBar.transform.position = new Vector3 (this.Position.x, this.Position.y+0.4f, this.Position.z-1f);
 		SetEpBar (EpPercent);	
 	}
 
