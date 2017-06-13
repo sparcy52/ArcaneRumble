@@ -42,9 +42,8 @@ public class UnitAvatar : MonoBehaviour
 
 	protected void Start ()
 	{
-		//Transform = GetComponent<Transform>();
+		// IMPLEMENTATION NOTE: defer functionality from Start to SetUnit
 		Animator = GetComponent<Animator>();
-		_hpBar = Instantiate(GuiComponents.GetHpBar ());
 	}
 
 	// Update is called once per frame
@@ -64,8 +63,8 @@ public class UnitAvatar : MonoBehaviour
 		_kill = true;
 	}
 
-	void CleanUp(){
-		Destroy(gameObject);
+	private void OnDestroy()
+	{
 		Destroy (_hpBar);
 	}
 
@@ -80,7 +79,7 @@ public class UnitAvatar : MonoBehaviour
 		} 
 		else if (_kill)
 		{
-			CleanUp ();
+			Destroy(this.gameObject);
 		}
 	}
 
@@ -89,6 +88,19 @@ public class UnitAvatar : MonoBehaviour
 		_unit = unit;
 		Position = unit.Position.ToVector3();
 		Rotation = unit.Facing.GetBearingRotation();
+		
+		// paint unit
+		var rend = gameObject.GetComponentsInChildren<MeshRenderer>();
+		foreach (var r in rend) {
+			foreach (var m in r.materials) {
+				if (m.HasProperty ("_Color")) {
+					m.color = _unit.Owner.Color;
+				}
+			}
+		}
+
+		// make hp bar
+		_hpBar = Instantiate(GuiComponents.GetHpBar ());
 	}
 
 	public void ApplyMove(Move move)

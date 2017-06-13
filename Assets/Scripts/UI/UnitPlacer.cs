@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Model;
@@ -6,90 +7,109 @@ using UnityEngine.UI;
 
 public class UnitPlacer : MonoBehaviour {
 
-	public GameObject[] Units;
-	public GameController gameController;
-	private GameObject go;
-	private bool lockInHex = false;
-
-	public GUISkin customSkin1;
-
-	private int currentPlayer = 0;
+	public GUISkin CustomSkin1;
 	
-	Transform _t;
-	TileVector _pos = new TileVector(0,0);
-	CardinalDirection _facing = CardinalDirection.North;
+	public GameController GameController;
+	public Player Player;
+
+	private GameObject[] Units	// shorthand alias
+	{
+		get { return Player.Units; }
+	}
+
+	/// <summary>
+	/// Key bindings to select the units in the array.
+	/// </summary>
+	public KeyCode[] UnitSelectionKeys = {
+		KeyCode.Alpha1,
+		KeyCode.Alpha2,
+		KeyCode.Alpha3,
+		KeyCode.Alpha4,
+	};
+
+	public KeyCode MoveNorthKey 				= KeyCode.W; 
+	public KeyCode MoveNortheastKey				= KeyCode.E; 
+	public KeyCode MoveSoutheastKey				= KeyCode.D; 	
+	public KeyCode MoveSouthKey					= KeyCode.S; 
+	public KeyCode MoveSouthwestKey				= KeyCode.A; 
+	public KeyCode MoveNorthwestKey				= KeyCode.Q; 
+	
+	public KeyCode RotateAnticlockwiseKey		= KeyCode.Z;
+	public KeyCode RotateClockwiseKey			= KeyCode.X;
+
+	private Transform _t;
+	private GameObject _preview;
+	
+	private int _selectedUnit 					= -1;
+	private TileVector _selectedPos 			= new TileVector(0, 0);
+	private CardinalDirection _selectedDir 		= CardinalDirection.North;
 
 	// Use this for initialization
-	void Start () {
+	void Start () 
+	{
 		_t = GetComponent<Transform> ();
 	}
 	
 	// Update is called once per frame
-	void Update () {
-
-		if (lockInHex == false) {
-			if (Input.GetKeyDown (KeyCode.W))
-				MovePos (CardinalDirection.North);
-			if (Input.GetKeyDown (KeyCode.S))
-				MovePos (CardinalDirection.South);
-			if (Input.GetKeyDown (KeyCode.A))
-				MovePos (CardinalDirection.Southwest);
-			if (Input.GetKeyDown (KeyCode.D))
-				MovePos (CardinalDirection.Southeast);
-			if (Input.GetKeyDown (KeyCode.Q))
-				MovePos (CardinalDirection.Northwest);
-			if (Input.GetKeyDown (KeyCode.E))
-				MovePos (CardinalDirection.Northeast);
-		}
-
-		if (Input.GetKeyDown(KeyCode.Space)) {
-			lockInHex = !lockInHex;
-		}
-
-		if (Input.GetKeyDown(KeyCode.B)) {
-			lockInHex = false;
-		}
-
-//		if (lockInHex == true && SelectedUnit != null) {
-//			if (Input.GetKeyDown(KeyCode.S)) {
-//				
-//			} else if (Input.GetKeyUp(KeyCode.W)) {
-//				
-//			}
-//		}
-
-	}
-
-	void OnGUI(){
-		GUI.skin = customSkin1;
-//		if (GUI.Button (new Rect (Screen.width / 2.5f, Screen.height / 20, 120, 30), "Start")) {
-//			Debug.Log ("Start button is pressed");
-//		}
-		for (int i = 0; i < Units.Length; i++) {
-			if (lockInHex == true && GUI.Button (new Rect (Screen.width / 20, Screen.height / 20 + Screen.height / 8.5f * i, 100, 25), Units [i].name)) {
-					PlaceMech (Units[i]);
-			}
-
-		}
-	}
-
-	void MovePos(CardinalDirection direction) {
-		_pos = _pos + direction;
-		_t.position = _pos.ToVector3 ();
-
-	}
-
-
-	public void PlaceMech(GameObject GameUnit)
+	void Update () 
 	{
-		lockInHex = false;
-		if (gameController.MakeUnit(GameUnit, _pos, _facing, gameController.Players[currentPlayer]))
+		// MOVEMENT
+		if (Input.GetKeyDown(MoveNorthKey)) 	MovePos(CardinalDirection.North);
+		if (Input.GetKeyDown(MoveNortheastKey)) MovePos(CardinalDirection.Northeast);
+		if (Input.GetKeyDown(MoveSoutheastKey)) MovePos(CardinalDirection.Southeast);
+		if (Input.GetKeyDown(MoveSouthKey)) 	MovePos(CardinalDirection.South);
+		if (Input.GetKeyDown(MoveSouthwestKey)) MovePos(CardinalDirection.Southwest);
+		if (Input.GetKeyDown(MoveNorthwestKey)) MovePos(CardinalDirection.Northwest);
+		
+		if (Input.GetKeyDown(RotateAnticlockwiseKey)) RotateDir(RelativeDirection.ForwardLeft);
+		if (Input.GetKeyDown(RotateClockwiseKey)) 	  RotateDir(RelativeDirection.ForwardRight);
+
+		// UNIT SELECTION / PLACEMENT
+		for (var i = 0; i < UnitSelectionKeys.Length; i++)
 		{
-			currentPlayer = (currentPlayer + 1) % gameController.Players.Length;
-			if (currentPlayer == 0) gameController.DoTurn();
+			if (Input.GetKeyDown(UnitSelectionKeys[i]))
+			{
+				if (_selectedUnit == i)	// place unit on double tap of selection key
+				{
+					if (GameController.MakeUnit(Units[i], _selectedPos, _selectedDir, Player))
+					{
+						_selectedUnit = -1;		// unit creation sucessful - deallocate preview
+						Destroy(_preview);
+						_preview = null;
+					}
+				}
+				else 					// select another unit
+				{
+					_selectedUnit = i;
+					if (_preview != null) Destroy(_preview);
+					_preview = Instantiate(Units[i], _t, false);
+					_preview.transform.localPosition = Vector3.zero;
+					_preview.transform.localRotation = Quaternion.identity;
+					break;
+				}
+			}
 		}
 	}
 
+	private void MovePos(CardinalDirection direction) {
+		_selectedPos = _selectedPos + direction;
+		_t.position = _selectedPos.ToVector3();
+	}
 
+	private void RotateDir(RelativeDirection direction)
+	{
+		_selectedDir = _selectedDir.Turn(direction);
+		_t.rotation = _selectedDir.GetBearingRotation();
+	}
 
+	private void OnValidate()
+	{
+		if (Player == null || UnitSelectionKeys == null) return;
+		if (UnitSelectionKeys.Length < Units.Length)
+		{
+			Debug.LogWarning(
+				string.Format("UnitPlacer {0} does not have enough key binds for Player {1}'s Loadout.", this, Player)
+			);
+		}
+	}
 }

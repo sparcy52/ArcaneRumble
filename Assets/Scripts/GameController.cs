@@ -1,27 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Model;
+using Random = UnityEngine.Random;
 
 public class GameController : MonoBehaviour
-{
-	public GameObject[] TestUnits;
-
-	public GameObject[] HexModels;
-	private List<GameObject> _hexInstances = new List<GameObject>();
-
-	public int UnitCount = 3;
-
+{	
+	public WorldGenerator WorldGenerator;
 	public Player[] Players = new Player[2];
+	private Dictionary<Player, bool> _playerUnitPlaced; // TODO: refactor resource management into Player class
 
     public int MapSize = 20;
     public int NumberOfMaps = 1;
 
 	private WorldController _worldController;
-
-	public Color Player1Color = Color.red;		//player 1's unit color
-	public Color Player2Color = Color.blue;		//player 2's unit color
-
-	private GameObject go;
 
 	public void DoTurn()
 	{
@@ -30,19 +22,68 @@ public class GameController : MonoBehaviour
 	
 	private void Start()
 	{
-        int map = Random.Range(0, NumberOfMaps);
-		var world = new World(map, MapSize);
-		_worldController = new WorldController(world);
-		RenderWorld(world);
-		Players[0] = new Player(1);
-		Players[1] = new Player(2);
+		_worldController = new WorldController(WorldGenerator.World);
+		_playerUnitPlaced = new Dictionary<Player, bool>();
+		foreach (var player in Players)
+		{
+			_playerUnitPlaced[player] = false;
+		}
 	}
 
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.Z)) DoTurn();
+		if (Input.GetKeyDown(KeyCode.BackQuote)) DoTurn();
 	}
 
+	/// <summary>
+	/// Creates a new Unit from a prefab. This includes adding it to the game logic, and creating a visual
+	/// representation. The prefab provided should have a UnitAvatar script attatched, as well as any
+	/// requirements of that script. This operation will fail if the given position is already occupied.
+	/// </summary>
+	/// <param name="unitPrefab">the prefab of the unit to create</param>
+	/// <param name="pos">the TileVector position to spawn it</param>
+	/// <param name="dir">the Direction for it to be facing</param>
+	/// <param name="owner">the Player owner of the Unit</param>
+	/// <returns>true if the operation was successful; false if not</returns>
+	public bool MakeUnit(GameObject unitPrefab, TileVector pos, CardinalDirection dir, Player owner)
+	{
+		if (_playerUnitPlaced[owner]) return false;	// stop players placing more than one unit
+		
+		var avatar = Instantiate(unitPrefab).GetComponent<UnitAvatar>();			
+		var unit = new Unit(avatar, pos, dir, owner);
+		avatar.SetUnit(unit);
+		
+		if (!_worldController.AddUnit(unit)) // oops! bad unit placement, so delete the unit as if nothing happened
+		{
+			Destroy(avatar.gameObject);
+			return false;
+		}
+		else 	// successful placement
+		{
+			_playerUnitPlaced[owner] = true;	// set player as placed a unit
+			
+			var allPlaced = true;				// check if all players have placed a unit
+			foreach (var placed in _playerUnitPlaced.Values)
+			{
+				if (!placed)
+				{
+					allPlaced = false;
+					break;
+				}
+			}
+			if (allPlaced)						// reset players' placement status and run game
+			{
+				_worldController.DoTurn();
+				foreach (var player in Players)
+				{
+					_playerUnitPlaced[player] = false;
+				}
+			}
+			return true;
+		}
+	}
+	
+	/*
 	private void RenderWorld(World world)
 	{
 		for (var w = 0; w < world.W; w++)
@@ -59,44 +100,14 @@ public class GameController : MonoBehaviour
 			}
 		}
 	}
-
-	/// <summary>
-	/// Creates a new Unit from a prefab. This includes adding it to the game logic, and creating a visual
-	/// representation. The prefab provided should have a UnitAvatar script attatched, as well as any
-	/// requirements of that script. This operation will fail if the given position is already occupied.
-	/// </summary>
-	/// <param name="unitPrefab">the prefab of the unit to create</param>
-	/// <param name="pos">the TileVector position to spawn it</param>
-	/// <param name="dir">the Direction for it to be facing</param>
-	/// <param name="owner">the Player owner of the Unit</param>
-	/// <returns>true if the operation was successful; false if not</returns>
-	public bool MakeUnit(GameObject unitPrefab, TileVector pos, CardinalDirection dir, Player owner)
+	private void CleanWorld()
 	{
-		UnitAvatar avatar = Instantiate(unitPrefab).GetComponent<UnitAvatar>();
-
-		Renderer[] rend = avatar.gameObject.GetComponentsInChildren<MeshRenderer>();
-
-		foreach (Renderer r in rend) {
-			foreach (Material m in r.materials) {
-				if (m.HasProperty ("_Color")) {
-					if (owner.num == 1) {
-						m.color = Player1Color;
-					} else {
-						m.color = Player2Color;
-					}
-				}
-			}
+		if (instancedTiles == null) {
+			instancedTiles = GameObject.FindGameObjectsWithTag ("EditorTile");
 		}
-			
-		Unit unit = new Unit(avatar, pos, dir, owner);
-		owner.AddUnit (unit);
-		avatar.SetUnit(unit);
-
-		if (!_worldController.AddUnit(unit))	// oops! bad unit placement, so delete the unit as if nothing happened
-		{
-			Destroy(avatar.gameObject);
-			return false;
+		foreach (GameObject tile in instancedTiles) {
+			DestroyImmediate (tile);
 		}
-		else return true;
 	}
+	*/
 }

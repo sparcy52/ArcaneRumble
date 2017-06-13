@@ -23,7 +23,56 @@ namespace Model
 				}
 			}
 		}*/
-        public World(int map, int mapsize)
+        public World(int map, Player[] Players)
+        {
+            
+            String filename = "map" + map + ".txt";
+            StreamReader reader = File.OpenText(filename);
+            string line;
+            int i = 0;
+            line = reader.ReadLine();
+            String[] mapsize = line.Split('\t');
+            W = int.Parse(mapsize[0]);
+            E = int.Parse(mapsize[1]);
+            _terrain = new Hex[W, E];
+            while ((line = reader.ReadLine()) != null)
+            {
+                //just hextype
+                string[] mapline = line.Split('\t');
+                for (int j = 0; j < mapline.Length; j++)
+                {
+                    if (mapline[j] == "-")
+                    {
+                        //Do nothing
+                    }
+                    else if (mapline[j] == "w")
+                    {
+                        _terrain[i, j] = new Hex(HexType.Water);
+                    }
+                    else if (mapline[j] == "*")
+                    {
+                        _terrain[i, j] = new Hex(HexType.Objective, 1);
+                    }
+                    else if (mapline[j] == "p1")
+                    {
+                        _terrain[i, j] = new Hex(HexType.Deploy, Players[0]);
+                    }
+                    else if (mapline[j] == "p2")
+                    {
+                        _terrain[i, j] = new Hex(HexType.Deploy, Players[1]);
+                    }
+                    else
+                    {
+                        HexType type = (HexType)int.Parse(mapline[j]);
+                        _terrain[i, j] = new Hex(type);
+                    }
+
+                }
+                i++;
+            }
+        }
+
+        /*public World(int map, int mapsize)
         {
             W = mapsize;
             E = mapsize;
@@ -54,7 +103,7 @@ namespace Model
                 }
                 i++;
             }
-        }
+        }*/
 
 
         public Hex this[TileVector pos]
@@ -90,7 +139,10 @@ namespace Model
         /// </summary>
         public HexType Type { get; private set; } 	// replace with a delegate to implement more complex hex behavior
 
-        public Objective objective { get; set; }
+        public Objective Objective { get; set; }
+        public bool Impassable { get; set; }
+        public bool Placeable { get; set; }
+        public Player Owner { get; set; }
 
 
         // public int Height { get; private set; }; // for if we want to implement height later
@@ -99,18 +151,42 @@ namespace Model
         {
             Type = type;
             Occupant = null;
-            objective = null;
+            Objective = null;
+            if (type == HexType.Water)
+            {
+                Impassable = true;
+            }
+            else
+            {
+                Impassable = false;
+            }
+            Placeable = false;
+            Owner = null;
         }
 
         public Hex(HexType type, int i)
         {
             Type = type;
             Occupant = null;
-            objective = new Objective();
+            Objective = new Objective();
+            Impassable = false;
+            Placeable = false;
+            Owner = null;
+        }
+
+        public Hex(HexType type,  Player player)
+        {
+            Type = type;
+            Occupant = null;
+            Objective = null;
+            Impassable = false;
+            Placeable = true;
+            Owner = player;
+
         }
         public bool hasObjective()
         {
-            if (objective == null)
+            if (Objective == null)
             {
                 return false;
             }
@@ -128,13 +204,17 @@ namespace Model
                 controllingPlayer = null;
             }
     }
-        
+    
+    
 
 
 	public enum HexType
 	{
 		Dirt,
 		Stone,
-		Snow
+		Snow,
+        Water,
+        Objective,
+        Deploy
 	}
 }

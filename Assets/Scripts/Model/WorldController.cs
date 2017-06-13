@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using System.Text;
 
 namespace Model
 {
@@ -15,7 +15,7 @@ namespace Model
 			_world = world;
 			_units = new List<Unit>();
 		}
-
+		
 		/// <summary>
 		/// Add a Unit to the game. Note that Unit objects are instantiated alongside UnitAvatars,
 		/// so creation should be done elsewhere, and plug back into here.
@@ -26,7 +26,7 @@ namespace Model
 		public bool AddUnit(Unit newUnit)
 		{
 			var hex = _world[newUnit.Position];
-			if (hex != null && hex.Occupant == null)
+			if (isHexPlaceable(newUnit.Owner, hex))
 			{
 				hex.Occupant = newUnit;
 				_units.Add(newUnit);
@@ -34,12 +34,25 @@ namespace Model
 			}
 			else return false;
 		}
+		
+        public bool isHexPlaceable(Player player, Hex hex)
+        {
+            //if (hex != null && hex.Placeable && hex.Owner == player && hex.Occupant == null)
+            if (hex != null && hex.Occupant == null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
-		/// <summary>
-		/// Simulate the game for a single turn.
-		/// </summary>
-		public void DoTurn()
-		{
+        /// <summary>
+        /// Simulate the game for a single turn.
+        /// </summary>
+        public void DoTurn()
+		{	
 			var activeUnits = new List<Unit>(_units);
 			var turnPlans = new Dictionary<Unit, TurnPlan>();
 
@@ -64,7 +77,8 @@ namespace Model
 					var resolver = new MoveResolver(move); // wrap so we can easily solve complex dependencies
 					moveOrigins.Add(move.Unit.Position, resolver); // register move origin
 
-					if (plan.IsActive() && _world[move.Destination] != null) // verify move is legal
+					var hex = _world[move.Destination];
+					if (plan.IsActive() && hex != null && !hex.Impassable) // verify move is legal
 					{
 						List<MoveResolver> movesToDestination;
 						if (moveDestinations.ContainsKey(move.Destination))
@@ -248,6 +262,26 @@ namespace Model
 				}
 			}
 		}
+		
+		private int _debugFrameCount = 0;
+	
+		private void DebugLog() {
+			var file = new System.IO.StreamWriter("debug/frame"+_debugFrameCount+++".txt");
+			for (var w = 0; w < _world.W; w++)
+			{
+				var line = new StringBuilder();
+				for (var e = 0; e < _world.E; e++)
+				{
+					var hex = _world[w, e];
+					if (hex != null)
+					{
+						line.Append(hex.Owner != null ? "@" : "_");
+					}
+					else  line.Append(" ");
+				}
+				file.WriteLine(line);
+			}
+			file.Close();
+		}
 	}
-
 }
