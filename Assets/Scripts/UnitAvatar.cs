@@ -90,9 +90,9 @@ public class UnitAvatar : MonoBehaviour
 		if (_unit == null) return;
 
 //		HpPercent = Mathf.Clamp((float) _unit.Health / _unit.MaxHealth,0f ,1f);
-		Debug.Log ("current health: "+_unit.Health);
-		Debug.Log ("Max health: "+_unit.MaxHealth);
-		Debug.Log ("Percent: "+HpPercent);
+//		Debug.Log ("current health: "+_unit.Health);
+//		Debug.Log ("Max health: "+_unit.MaxHealth);
+//		Debug.Log ("Percent: "+HpPercent);
 		_hpBar.transform.position = new Vector3 (this.Position.x, this.Position.y+0.6f, this.Position.z-1f);
 		_hpScript.SetPercent (HpPercent);
 //		Debug.Log (HpPercent);
@@ -127,7 +127,6 @@ public class UnitAvatar : MonoBehaviour
 		else if (_kill)
 		{
 			CleanUp ();
-			Debug.Log ("killed");
 		}
 	}
 

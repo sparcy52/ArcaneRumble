@@ -61,7 +61,7 @@ namespace Model
 				unit.Reset();
 				turnPlans.Add(unit, unit.GetMovementPlan(_world));
 			}
-
+			
 			while (activeUnits.Count > 0) // main loop: iterate through each simulation frame
 			{
 				// STEP 1: COMBAT DETERMINATION
@@ -163,9 +163,9 @@ namespace Model
 				}
 				
 				// STEP 5: PRUNE ACTIVE UNITS & TURN PLANS
-				for (var i = activeUnits.Count - 1; i >= 0; i--)
+				for (var i = activeUnits.Count - 1; i >= 0; i--)	// iterate backwards so we can remove elements
 				{
-					if (!activeUnits[i].CanMove())
+					if (!turnPlans[activeUnits[i]].IsActive())
 					{
 						turnPlans.Remove(activeUnits[i]);
 						activeUnits.RemoveAt(i);
@@ -281,7 +281,7 @@ namespace Model
 					var hex = _world[w, e];
 					if (hex != null)
 					{
-						line.Append(hex.Owner != null ? "@" : "_");
+						line.Append(hex.Occupant != null ? "@" : "_");
 					}
 					else line.Append(" ");
 				}

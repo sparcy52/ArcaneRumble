@@ -33,10 +33,6 @@ namespace Model
 		/// <param name="accepted">the Move that was accepted</param>
 		public void AcceptMove(Move accepted)
 		{
-			if (accepted.IsHalt())
-			{
-				_timeout = 0;	// TODO: fix this nasty thing - little hack to prevent infinite loop
-			}
 			OnAccept(accepted);
 			ApplyMove(accepted);
 		}
