@@ -29,22 +29,22 @@ namespace Model
 		// we might need more, for example, combat modifiers
 
 		// Private fields
-		public readonly UnitAvatar _avatar;	// Unity representation
+		public readonly UnitAvatar Avatar;	// Unity representation
 
 		public Unit (UnitAvatar avatar, TileVector position, CardinalDirection facing, Player owner)
 		{
-			_avatar = avatar;
+			Avatar = avatar;
 
 			Position = position;
 			Facing = facing;
 
-			MaxHealth = _avatar.MaxHealth;
+			MaxHealth = Avatar.MaxHealth;
 			Health = MaxHealth;
 
-			MaxEnergy = _avatar.MaxEnergy;
+			MaxEnergy = Avatar.MaxEnergy;
 			Energy = MaxEnergy;
 
-			_moveMethod = _avatar.Ai.GetMovementPlan;
+			_moveMethod = Avatar.Ai.GetMovementPlan;
 			Owner = owner;
 
 		}
@@ -63,7 +63,7 @@ namespace Model
 
 		public void Kill()
 		{
-			_avatar.Kill();
+			Avatar.Kill();
 		}
 		
 		public bool CanMove()
@@ -83,7 +83,7 @@ namespace Model
 			// TODO: ensure units don't go into negative energy
 			if (move.Unit != this) throw new ArgumentException("Applied move does not reference this unit");
 
-			_avatar.ApplyMove(move); // animate avatar (do this first, as it needs to read fields here)
+			Avatar.ApplyMove(move); // animate avatar (do this first, as it needs to read fields here)
 
 			Facing = Facing.Turn(move.Direction);
 			Position = move.Destination;
@@ -105,7 +105,7 @@ namespace Model
 			
 			if (this.Energy <= 0) return;	// skip combat
 			
-			_avatar.ApplyCombat(other,other.Position);
+			Avatar.ApplyCombat(other,other.Position);
 			
 			// do combat - deal damage to other unit, lose energy
 			var damage = Math.Min(this.Energy, other.Health); 	// TODO: implement buff mechanics here. 

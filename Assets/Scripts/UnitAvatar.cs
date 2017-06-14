@@ -24,7 +24,8 @@ public class UnitAvatar : MonoBehaviour
 	//public Transform Transform { get; protected set; }
 
 	// Movement state trackers
-	public Queue<IAnimation> _moveQueue = new Queue<IAnimation>();
+	private Queue<IAnimation> _moveQueue = new Queue<IAnimation>();
+	public IAnimation CurrentAnimation { get { return _moveQueue.Count > 0 ? _moveQueue.Peek() : null; } }
 
 	private bool _kill = false;
 
@@ -46,10 +47,35 @@ public class UnitAvatar : MonoBehaviour
 		Animator = GetComponent<Animator>();
 	}
 
+	/// <summary>
+	/// Effectively a constructor to be called after GameObjects with this Script are instantiated.
+	/// </summary>
+	/// <param name="unit">The Unit to base this off</param>
+	public void SetUnit(Unit unit)
+	{
+		if (unit.Avatar != this) throw new ArgumentException("Assigned Unit already has an Avatar");
+		_unit = unit;
+		Position = unit.Position.ToVector3();
+		Rotation = unit.Facing.GetBearingRotation();
+		
+		// paint unit
+		var rend = gameObject.GetComponentsInChildren<MeshRenderer>();
+		foreach (var r in rend) {
+			foreach (var m in r.materials) {
+				if (m.HasProperty ("_Color")) {
+					m.color = _unit.Owner.Color;
+				}
+			}
+		}
+
+		// make hp bar
+		_hpBar = Instantiate(GuiComponents.GetHpBar ());
+	}
+	
 	// Update is called once per frame
 	void Update () {
 		if (_unit == null) return;
-		HpPercent = _unit.Health / _unit.MaxHealth;
+		HpPercent = (float) _unit.Health / _unit.MaxHealth;
 		_hpBar.transform.position = new Vector3 (this.Position.x, this.Position.y+3f, this.Position.z);
 		SetHpBar (HpPercent);	
 	}
@@ -83,26 +109,6 @@ public class UnitAvatar : MonoBehaviour
 		}
 	}
 
-	public void SetUnit(Unit unit)
-	{
-		_unit = unit;
-		Position = unit.Position.ToVector3();
-		Rotation = unit.Facing.GetBearingRotation();
-		
-		// paint unit
-		var rend = gameObject.GetComponentsInChildren<MeshRenderer>();
-		foreach (var r in rend) {
-			foreach (var m in r.materials) {
-				if (m.HasProperty ("_Color")) {
-					m.color = _unit.Owner.Color;
-				}
-			}
-		}
-
-		// make hp bar
-		_hpBar = Instantiate(GuiComponents.GetHpBar ());
-	}
-
 	public void ApplyMove(Move move)
 	{
 		if (move.IsHalt()) return;
@@ -112,6 +118,6 @@ public class UnitAvatar : MonoBehaviour
 	public void ApplyCombat(Unit otherUnit, TileVector attackPosition)
 	{
 		//if (move.IsHalt()) return;
-		_moveQueue.Enqueue(new CombatAnimation(this, otherUnit, attackPosition));
+		_moveQueue.Enqueue(new CombatAnimation(_unit, otherUnit));
 	}
 }
