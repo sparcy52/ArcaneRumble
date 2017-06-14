@@ -19,15 +19,8 @@ public class DObjective : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (objectiveHex.Owner != null && objectiveHex.Occupant.Owner != null)
-        {
-            if (objectiveHex.Occupant.Owner != objectiveHex.Owner)
-            {
-                orenderer.material.color = Color.red;
-                //orenderer.material.color = ojbectiveHex.Occupant.Owner.Colour;
-                objectiveHex.Owner = objectiveHex.Occupant.Owner;
-            }
-        }
-        //else do nothing
-	}
+
+        //orenderer.material.color = objectiveHex.Owner.Color;
+        orenderer.material.color = Color.red;
+    }
 }
