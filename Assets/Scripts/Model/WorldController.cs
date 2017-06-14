@@ -7,13 +7,15 @@ namespace Model
 {
 	public class WorldController
 	{
+		public int RoundNumber { get; private set; }
+		
 		private World _world;
-		private List<Unit> _units;
+		private ICollection<Unit> _units;
 
 		public WorldController(World world)
 		{
 			_world = world;
-			_units = new List<Unit>();
+			_units = new HashSet<Unit>();
 		}
 		
 		/// <summary>
@@ -26,16 +28,17 @@ namespace Model
 		public bool AddUnit(Unit newUnit)
 		{
 			var hex = _world[newUnit.Position];
-			if (isHexPlaceable(newUnit.Owner, hex))
+			if (IsHexPlaceable(newUnit.Owner, hex))
 			{
 				hex.Occupant = newUnit;
 				_units.Add(newUnit);
+				newUnit.Owner.DeployUnit(newUnit);
 				return true;
 			}
 			else return false;
 		}
 		
-        public bool isHexPlaceable(Player player, Hex hex)
+        public bool IsHexPlaceable(Player player, Hex hex)
         {
             //if (hex != null && hex.Placeable && hex.Owner == player && hex.Occupant == null)
             if (hex != null && hex.Occupant == null)
@@ -61,95 +64,15 @@ namespace Model
 				unit.Reset();
 				turnPlans.Add(unit, unit.GetMovementPlan(_world));
 			}
-
+			
 			while (activeUnits.Count > 0) // main loop: iterate through each simulation frame
 			{
-				var moveDestinations = new Dictionary<TileVector, List<MoveResolver>>(); // where units want to move to
-				var moveOrigins = new Dictionary<TileVector, MoveResolver>(); // where units are moving from
+				// STEP 1: COMBAT DETERMINATION
+				var pendingCombat = new HashSet<Combat>(); // stops duplication of the same combat
+				var unitsInCombat = new HashSet<Unit>();
 
-				// TODO: also check units which are in combat at the start of the turn
-
-				// STEP 1: AI PROCESSING
-				foreach (var plan in turnPlans.Values) // collect all units' moves into the Dictionary
+				foreach (var unit in activeUnits)
 				{
-					var move = plan.GetNextMove();
-
-					var resolver = new MoveResolver(move); // wrap so we can easily solve complex dependencies
-					moveOrigins.Add(move.Unit.Position, resolver); // register move origin
-
-					var hex = _world[move.Destination];
-					if (plan.IsActive() && hex != null && !hex.Impassable) // verify move is legal
-					{
-						List<MoveResolver> movesToDestination;
-						if (moveDestinations.ContainsKey(move.Destination))
-						{
-							movesToDestination = moveDestinations[move.Destination];
-						}
-						else // initialise the list if it doesn't exist yet
-						{
-							movesToDestination = new List<MoveResolver>(6);
-							moveDestinations.Add(move.Destination, movesToDestination);
-						}
-
-						movesToDestination.Add(resolver);
-					}
-					else // illegal move; reject it early and do not process its destination
-					{
-						resolver.Resolve(false);
-					}
-				}
-
-				// STEP 2: MOVE CONFLICT RESOLUTION
-				foreach (var entry in moveDestinations) // check all future mech positions, finalise moves
-				{
-					var destination = entry.Key;
-					var moves = entry.Value;
-
-					MoveResolver dependency; // find the move from the destination tile
-					if (moveOrigins.ContainsKey(destination))
-					{
-						dependency = moveOrigins[destination];
-
-						// if the destination tile is occupied, then automatically reject all moves to it
-						if (!dependency.Move.IsStep())
-						{
-							dependency.Resolve(true);
-							foreach (var move in moves)
-							{
-								move.Resolve(false);
-							}
-						}
-					}
-					else
-					{
-						dependency = null;
-					}
-
-					var best = 0;
-					for (var i = 1; i < moves.Count; i++)
-					{
-						if (Move.PriorityComparer.Compare(moves[i].Move, moves[best].Move) > 0)
-						{
-							moves[best].Resolve(false);
-							best = i;
-						}
-						else
-						{
-							moves[i].Resolve(false);
-						}
-					}
-
-					if (dependency != null) moves[best].SetParent(dependency);
-					else moves[best].Resolve(true);
-				}
-
-				// STEP 3: COMBAT DETERMINATION
-				var pendingCombat = new HashSet<Combat>(); // stops doubling up of the same combat
-
-				for (var i = activeUnits.Count - 1; i >= 0; i--) // iterate backwards so we can remove elements
-				{
-					var unit = activeUnits[i];
-					// TODO: implement more complex combat engagement rules here
 					foreach (var adj in unit.Position.Adjacent().Select(pos => _world[pos])) // for each adjacent Hex
 					{
 						if (adj == null) continue;
@@ -158,12 +81,13 @@ namespace Model
 						if (neighbour != null && neighbour.Owner!= unit.Owner)
 						{
 							pendingCombat.Add(new Combat(unit, neighbour));
+							unitsInCombat.Add(unit);
+							unitsInCombat.Add(neighbour);
 						}
 					}
-					if (!unit.CanMove()) activeUnits.RemoveAt(i);	// unit no longer active
 				}
 
-				// STEP 4: COMBAT RESOLUTION
+				// STEP 2: COMBAT RESOLUTION
 				var pendingCombatSorted = new List<Combat>(pendingCombat);
 				pendingCombatSorted.Sort(Combat.PriorityComparer);	// sort by priortiy
 				
@@ -176,27 +100,102 @@ namespace Model
 					{
 						combat.Apply();
 						
-						if (unit1.IsDead())
+						FinaliseCombat(unit1, turnPlans, activeUnits);	// the procedural programmer in me hates this
+						FinaliseCombat(unit2, turnPlans, activeUnits);	// lambda closure would be so much nicer here
+					}
+				}
+				
+				// STEP 3: MOVE PRE-PROCESSING				
+				var moveDestinations = new Dictionary<TileVector, List<MoveResolver>>(); // where units want to move to
+				var moveOrigins		 = new Dictionary<TileVector, MoveResolver>(); 		 // where units are moving from
+				
+				foreach (var plan in turnPlans.Values) // collect all units' moves into the Dictionary
+				{
+					var canMove   = plan.IsActive() && !unitsInCombat.Contains(plan.Unit);
+					var move 	  = canMove? plan.GetNextMove() : null;
+					var mayVacate = canMove && move.IsStep();
+
+					// if move is a step, moves here are conditional upon it. otherwise, deny outright
+					var resolver = mayVacate ? MoveResolver.Of(move) : MoveResolver.Deny();
+					moveOrigins.Add(plan.Unit.Position, resolver);
+					
+					if (mayVacate) // add resolver to the move's intended destination for processing later
+					{
+						var hex = _world[move.Destination];
+						if (hex != null && !hex.Impassable) // if target is valid
 						{
-							turnPlans.Remove(unit1);
-							activeUnits.Remove(unit1);
-							_world[unit1.Position].Occupant = null; // NullRef here indicates bad unit position
-							_units.Remove(unit1);
-							unit1.Kill();
+							List<MoveResolver> movesToDestination;
+							if (moveDestinations.ContainsKey(move.Destination))
+							{
+								movesToDestination = moveDestinations[move.Destination];
+							}
+							else // initialise the list if it doesn't exist yet
+							{
+								movesToDestination = new List<MoveResolver>(6);
+								moveDestinations.Add(move.Destination, movesToDestination);
+							}
+							movesToDestination.Add(resolver);
 						}
-						if (unit2.IsDead())
+						else resolver.Resolve(false);	// reject if move is illegal
+					}
+				}
+
+				// STEP 4: MOVE CONFLICT RESOLUTION
+				foreach (var entry in moveDestinations) // check all future mech positions, finalise moves
+				{
+					var destination = entry.Key;
+					var moves 		= entry.Value;
+
+					var best = 0;
+					for (var i = 1; i < moves.Count; i++)	// reject all moves here except the best one
+					{
+						if (Move.PriorityComparer.Compare(moves[i].Move, moves[best].Move) > 0)
 						{
-							turnPlans.Remove(unit2);
-							activeUnits.Remove(unit2);
-							_world[unit2.Position].Occupant = null; // NullRef here indicates bad unit position
-							_units.Remove(unit2);
-							unit2.Kill();
+							moves[best].Resolve(false);
+							best = i;
 						}
+						else 	// not the best move: reject
+						{
+							moves[i].Resolve(false);
+						}
+					}
+					var dependency = moveOrigins.ContainsKey(destination) ? moveOrigins[destination] : null;
+					
+					if (dependency != null) moves[best].SetParent(dependency);
+					else 					moves[best].Resolve(true);
+				}
+				
+				// STEP 5: PRUNE ACTIVE UNITS & TURN PLANS
+				for (var i = activeUnits.Count - 1; i >= 0; i--)	// iterate backwards so we can remove elements
+				{
+					if (!turnPlans[activeUnits[i]].IsActive())
+					{
+						turnPlans.Remove(activeUnits[i]);
+						activeUnits.RemoveAt(i);
 					}
 				}
 			}
+			
+			RoundNumber++;
 		}
 
+		private void FinaliseCombat(Unit unit, IDictionary<Unit, TurnPlan> turnPlans, ICollection<Unit> activeUnits)
+		{
+			// TODO: update arguments with attacker/defender for merge with Jack's branch
+			if (unit.IsDead())
+			{
+				turnPlans.Remove(unit);
+				activeUnits.Remove(unit);
+				_world[unit.Position].Occupant = null; // NullRef here indicates bad unit position
+				_units.Remove(unit);
+				unit.Kill();
+			}
+		}
+
+		/// <summary>
+		/// Class which is used to solve complex dependencies between moves.
+		/// Moves in the graph are automatically accepted and applied once it becomes solvable.
+		/// </summary>
 		private class MoveResolver
 		{
 			public readonly Move Move;
@@ -205,10 +204,22 @@ namespace Model
 			private MoveResolver _root;	// so we can detect cycles
 			private List<MoveResolver> _dependents = new List<MoveResolver>();
 
-			public MoveResolver(Move move)
+			private MoveResolver(Move move)
 			{
 				_root = this;
 				Move = move;
+			}
+
+			public static MoveResolver Of(Move move)
+			{
+				return new MoveResolver(move);
+			}
+
+			public static MoveResolver Deny()
+			{
+				var block = new MoveResolver(null);
+				block.Resolved = false;
+				return block;
 			}
 
 			public bool Resolve(bool outcome)
@@ -275,9 +286,9 @@ namespace Model
 					var hex = _world[w, e];
 					if (hex != null)
 					{
-						line.Append(hex.Owner != null ? "@" : "_");
+						line.Append(hex.Occupant != null ? "@" : "_");
 					}
-					else  line.Append(" ");
+					else line.Append(" ");
 				}
 				file.WriteLine(line);
 			}

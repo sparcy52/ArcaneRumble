@@ -33,12 +33,8 @@ namespace Model
 		/// <param name="accepted">the Move that was accepted</param>
 		public void AcceptMove(Move accepted)
 		{
-			if (accepted.IsHalt())
-			{
-				_timeout = 0;	// TODO: fix this nasty thing - little hack to prevent infinite loop
-			}
-			ApplyMove(accepted);
 			OnAccept(accepted);
+			ApplyMove(accepted);
 		}
 
 		/// <summary>
@@ -49,8 +45,8 @@ namespace Model
 		/// <param name="replacement">the Move that should be executed in <c>rejected's</c> place</param>
 		public void RejectMove(Move rejected, Move replacement)
 		{
-			ApplyMove(replacement);
 			OnReject(rejected, replacement);
+			ApplyMove(replacement);
 			if (--_timeout == 0)
 			{
 				Utils.Printf("Timed out TurnPlan {0} on move {1}", this, rejected);
@@ -65,7 +61,7 @@ namespace Model
 
 		// SUBCLASS HOOKS
 
-		protected virtual void OnAccept(Move acceted)
+		protected virtual void OnAccept(Move accepted)
 		{
 
 		}
@@ -96,7 +92,14 @@ namespace Model
 				{
 					origin.Occupant = null;
 				}
-				World[move.Destination].Occupant = Unit;
+
+				var destination = World[move.Destination];
+				destination.Occupant = Unit;
+				if (destination.HasObjective())
+				{
+					// TODO: refactor into WorldController for mechanical refinement
+					Unit.Owner.TakeObjective(destination.Objective);
+				}
 			}
 			Unit.ApplyMove(move);
 		}

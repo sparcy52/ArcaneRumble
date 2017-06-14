@@ -70,6 +70,7 @@ namespace Model
                 }
                 i++;
             }
+			reader.Close ();
         }
 
         /*public World(int map, int mapsize)
@@ -183,7 +184,7 @@ namespace Model
             Placeable = true;
             Owner = player;
         }
-        public bool hasObjective()
+        public bool HasObjective()
         {
             if (Objective == null)
             {

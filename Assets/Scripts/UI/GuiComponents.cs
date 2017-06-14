@@ -5,6 +5,7 @@ using UnityEngine;
 public class GuiComponents : MonoBehaviour {
 
 	public GameObject HpBar;
+	public GameObject EpBar;
 
 	public static GuiComponents _instance;
 
@@ -20,5 +21,9 @@ public class GuiComponents : MonoBehaviour {
 
 	public static GameObject GetHpBar() {
 		return _instance.HpBar;
+	}
+
+	public static GameObject GetEpBar() {
+		return _instance.EpBar;
 	}
 }

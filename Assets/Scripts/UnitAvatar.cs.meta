@@ -1,10 +1,12 @@
 fileFormatVersion: 2
 guid: b573f884c323fa844be5f5283002b637
-timeCreated: 1493765507
+timeCreated: 1497328023
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - _hpBar: {fileID: 1348630599323778, guid: cb79d2184d0d34918a2b81aad11e0837, type: 2}
+  - Ai: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

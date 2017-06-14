@@ -86,6 +86,11 @@ namespace Model
 		{
 			return (RelativeDirection) facing.GetArcLinear(other);
 		}
+		
+		public static RelativeDirection Cross(this RelativeDirection facing, RelativeDirection other)
+		{
+			return Cross((CardinalDirection) facing, (CardinalDirection) other);
+		}
 
 		/// <summary>
 		/// Mirrors a RelativeDirection such that Left switches to Right and vise-versa
