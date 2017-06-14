@@ -7,6 +7,8 @@ namespace Model
 {
 	public class WorldController
 	{
+		public int RoundNumber { get; private set; }
+		
 		private World _world;
 		private ICollection<Unit> _units;
 
@@ -30,6 +32,7 @@ namespace Model
 			{
 				hex.Occupant = newUnit;
 				_units.Add(newUnit);
+				newUnit.Owner.DeployUnit(newUnit);
 				return true;
 			}
 			else return false;
@@ -172,6 +175,8 @@ namespace Model
 					}
 				}
 			}
+			
+			RoundNumber++;
 		}
 
 		private void FinaliseCombat(Unit unit, IDictionary<Unit, TurnPlan> turnPlans, ICollection<Unit> activeUnits)
