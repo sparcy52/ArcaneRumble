@@ -19,7 +19,7 @@ public class DObjective : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if(objectiveHex.Owner != null)
+        if(objectiveHex.Objective.controllingPlayer != null)
         {
             orenderer[9].material.color = objectiveHex.Objective.controllingPlayer.Color;
         }
