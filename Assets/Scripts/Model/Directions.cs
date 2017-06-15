@@ -151,7 +151,7 @@ namespace Model
 			if (steps > 3) return 3 - steps;
 			else return steps;
 		}
-
+		
 		// INTERNAL UTILITIES
 
 		private static int Wrap(int d)

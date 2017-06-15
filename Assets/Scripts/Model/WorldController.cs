@@ -56,22 +56,25 @@ namespace Model
         /// </summary>
         public void DoTurn()
 		{	
-			var activeUnits = new List<Unit>(_units);
-			var turnPlans = new Dictionary<Unit, TurnPlan>();
+			var activeUnits = new Dictionary<Unit, TurnPlan>();
 
-			foreach (var unit in activeUnits)
+			foreach (var unit in _units)
 			{
 				unit.Reset();
-				turnPlans.Add(unit, unit.GetMovementPlan(_world));
+				activeUnits.Add(unit, unit.GetMovementPlan(_world));
 			}
 			
+			#if DEBUG 
+			DebugLogFrame();
+			#endif
+			
 			while (activeUnits.Count > 0) // main loop: iterate through each simulation frame
-			{
+			{	
 				// STEP 1: COMBAT DETERMINATION
 				var pendingCombat = new HashSet<Combat>(); // stops duplication of the same combat
 				var unitsInCombat = new HashSet<Unit>();
 
-				foreach (var unit in activeUnits)
+				foreach (var unit in activeUnits.Keys)
 				{
 					foreach (var adj in unit.Position.Adjacent().Select(pos => _world[pos])) // for each adjacent Hex
 					{
@@ -100,8 +103,8 @@ namespace Model
 					{
 						combat.Apply();
 						
-						FinaliseCombat(unit1, unit2, turnPlans, activeUnits);	// lambda/local-function would be
-						FinaliseCombat(unit2, unit1, turnPlans, activeUnits);	// ideal here! outdated version of C#
+						FinaliseCombat(unit1, unit2, activeUnits);	// lambda/local-function would be
+						FinaliseCombat(unit2, unit1, activeUnits);	// ideal here! outdated version of C#
 					}
 				}
 				
@@ -109,15 +112,26 @@ namespace Model
 				var moveDestinations = new Dictionary<TileVector, List<MoveResolver>>(); // where units want to move to
 				var moveOrigins		 = new Dictionary<TileVector, MoveResolver>(); 		 // where units are moving from
 				
-				foreach (var plan in turnPlans.Values) // collect all units' moves into the Dictionary
+				foreach (var unit in _units) 			// collect all units' moves into the Dictionaries, using plans
 				{
-					var canMove   = plan.IsActive() && !unitsInCombat.Contains(plan.Unit);
+					TurnPlan plan = null;
+					if (activeUnits.ContainsKey(unit)) 	// only active units can make moves - bind a plan
+					{
+						plan = activeUnits[unit];
+						if (!plan.IsActive())			// unit can no longer make moves, so remove from active units
+						{
+							activeUnits.Remove(unit);
+							plan = null;				// unbind plan for this frame
+						}
+					}
+					
+					var canMove   = plan != null && !unitsInCombat.Contains(plan.Unit);
 					var move 	  = canMove? plan.GetNextMove() : null;
 					var mayVacate = canMove && move.IsStep();
 
 					// if move is a step, moves here are conditional upon it. otherwise, deny outright
 					var resolver = mayVacate ? MoveResolver.Of(move) : MoveResolver.Deny();
-					moveOrigins.Add(plan.Unit.Position, resolver);
+					moveOrigins.Add(unit.Position, resolver);
 					
 					if (mayVacate) // add resolver to the move's intended destination for processing later
 					{
@@ -164,27 +178,19 @@ namespace Model
 					if (dependency != null) moves[best].SetParent(dependency);
 					else 					moves[best].Resolve(true);
 				}
-				
-				// STEP 5: PRUNE ACTIVE UNITS & TURN PLANS
-				for (var i = activeUnits.Count - 1; i >= 0; i--)	// iterate backwards so we can remove elements
-				{
-					if (!turnPlans[activeUnits[i]].IsActive())
-					{
-						turnPlans.Remove(activeUnits[i]);
-						activeUnits.RemoveAt(i);
-					}
-				}
+			
+				#if DEBUG 
+				DebugLogFrame();
+				#endif
 			}
 			
 			RoundNumber++;
 		}
 
-		private void FinaliseCombat(Unit attacker, Unit defender, 
-			IDictionary<Unit, TurnPlan> turnPlans, ICollection<Unit> activeUnits)
+		private void FinaliseCombat(Unit attacker, Unit defender, IDictionary<Unit, TurnPlan> activeUnits)
 		{
 			if (defender.IsDead())
 			{
-				turnPlans.Remove(defender);
 				activeUnits.Remove(defender);
 				_world[defender.Position].Occupant = null; // NullRef here indicates bad unit position
 				_units.Remove(defender);
@@ -256,7 +262,7 @@ namespace Model
 					Utils.Printf("Resolved cycle starting at move: {0}", Move);
 					Resolve(true);
 				}
-				else 							// wait until a decision is made
+				else 							// wait until a decision is made later
 				{
 					SetRoot(parent._root);
 					parent._root._dependents.Add(this);	// add to root to shorten call stack
@@ -274,25 +280,110 @@ namespace Model
 			}
 		}
 		
-		private int _debugFrameCount = 0;
+		private int _debugFrameCount = 0; 
 	
-		private void DebugLog() {
-			var file = new System.IO.StreamWriter("debug/frame"+_debugFrameCount+++".txt");
+		private void DebugLogFrame() {
+			var file = new System.IO.StreamWriter(
+					string.Format("debug/frame{0:00000}.txt", _debugFrameCount++)
+			);
+
+			{
+				var line = new StringBuilder();
+				line.Append("W\\E ");
+				for (var i = 0; i < _world.E; i += 2)
+				{
+					line.AppendFormat("{0:0}  ", i);
+				}
+				file.WriteLine(line);
+			}
+			
+			var orphanedUnits = new HashSet<Unit>();
+			var mapUnits = new HashSet<Unit>();
+			
 			for (var w = 0; w < _world.W; w++)
 			{
 				var line = new StringBuilder();
+				line.AppendFormat("{0:0}   ", w);
 				for (var e = 0; e < _world.E; e++)
 				{
 					var hex = _world[w, e];
 					if (hex != null)
 					{
-						line.Append(hex.Occupant != null ? "@" : "_");
+						if (hex.Occupant != null)
+						{
+							line.Append(UnicodeChar(hex.Occupant.Facing));
+							mapUnits.Add(hex.Occupant);
+							if (!_units.Contains(hex.Occupant)) orphanedUnits.Add(hex.Occupant);
+						}
+						else line.Append('_');
 					}
 					else line.Append(" ");
 				}
 				file.WriteLine(line);
 			}
+			file.WriteLine();
+
+			var missingUnits = new HashSet<Unit>();
+			
+			foreach (var unit in _units)
+			{
+				if (orphanedUnits.Contains(unit)) continue;
+				if (!mapUnits.Contains(unit))
+				{
+					missingUnits.Add(unit);
+					continue;
+				}
+				file.WriteLine(
+					"{0,-8}{1,-9} HP:{2,-3}EP:{3,-3}",unit.Position, unit.Facing, unit.Health, unit.Energy
+				);	
+			}
+			
+			if (missingUnits.Count > 0)
+			{
+				file.WriteLine("UNMAPPED UNITS:");
+				foreach (var unit in missingUnits)
+				{
+					file.WriteLine(
+						"{0,-8}{1,-9} HP:{2,-3}EP:{3,-3}",unit.Position, unit.Facing, unit.Health, unit.Energy
+					);	
+				}
+			}
+			
+			if (orphanedUnits.Count > 0)
+			{
+				file.WriteLine("ORPHANED UNITS:");
+				foreach (var unit in orphanedUnits)
+				{
+					file.WriteLine(
+						"{0,-8}{1,-9} HP:{2,-3}EP:{3,-3}",unit.Position, unit.Facing, unit.Health, unit.Energy
+					);	
+				}
+			}
+				
+			file.WriteLine("---------------");
+			file.WriteLine();
 			file.Close();
+		}
+		
+		private static char UnicodeChar(CardinalDirection direction)
+		{
+			switch (direction)
+			{
+				case CardinalDirection.North:
+					return '↖';
+				case CardinalDirection.Northeast:
+					return '↑';
+				case CardinalDirection.Southeast:
+					return '→';
+				case CardinalDirection.South:
+					return '↘';
+				case CardinalDirection.Southwest:
+					return '↓';
+				case CardinalDirection.Northwest:
+					return '←';
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
 		}
 	}
 }
