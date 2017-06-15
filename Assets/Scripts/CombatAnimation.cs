@@ -30,10 +30,12 @@ public class CombatAnimation : SyncedAnimation<CombatAnimation, CombatAnimation>
 					break;
 				default:
 					Target.ResetPaint();
+					Target.Scale = 1;
 					return true;
 			}
 			if (Target == null) return true;
 			Target.Paint(color);
+			Target.Scale = 1.1f;
 
 			_elapsed += time;
 			if (_elapsed > flashTime)

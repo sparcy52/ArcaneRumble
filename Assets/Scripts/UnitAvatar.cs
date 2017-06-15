@@ -41,6 +41,19 @@ public class UnitAvatar : MonoBehaviour
 		get { return transform.position; }
 	}
 
+	private Vector3 _initScale;
+	private float _scaleMod = 1;
+	
+	public float Scale
+	{
+		set
+		{
+			_scaleMod = value;
+			transform.localScale = _initScale * value;
+		}
+		get { return _scaleMod; }
+	}
+
 	public float HpPercent {
 		get { return (float) _unit.Health / _unit.MaxHealth; }
 	}
@@ -53,6 +66,7 @@ public class UnitAvatar : MonoBehaviour
 	{
 		// IMPLEMENTATION NOTE: defer functionality from Start to SetUnit
 		Animator = GetComponent<Animator>();
+		_initScale = transform.localScale;
 	}
 
 	/// <summary>
