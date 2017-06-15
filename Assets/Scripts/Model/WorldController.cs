@@ -100,8 +100,8 @@ namespace Model
 					{
 						combat.Apply();
 						
-						FinaliseCombat(unit1, turnPlans, activeUnits);	// the procedural programmer in me hates this
-						FinaliseCombat(unit2, turnPlans, activeUnits);	// lambda closure would be so much nicer here
+						FinaliseCombat(unit1, unit2, turnPlans, activeUnits);	// lambda/local-function would be
+						FinaliseCombat(unit2, unit1, turnPlans, activeUnits);	// ideal here! outdated version of C#
 					}
 				}
 				
@@ -179,16 +179,16 @@ namespace Model
 			RoundNumber++;
 		}
 
-		private void FinaliseCombat(Unit unit, IDictionary<Unit, TurnPlan> turnPlans, ICollection<Unit> activeUnits)
+		private void FinaliseCombat(Unit attacker, Unit defender, 
+			IDictionary<Unit, TurnPlan> turnPlans, ICollection<Unit> activeUnits)
 		{
-			// TODO: update arguments with attacker/defender for merge with Jack's branch
-			if (unit.IsDead())
+			if (defender.IsDead())
 			{
-				turnPlans.Remove(unit);
-				activeUnits.Remove(unit);
-				_world[unit.Position].Occupant = null; // NullRef here indicates bad unit position
-				_units.Remove(unit);
-				unit.Kill();
+				turnPlans.Remove(defender);
+				activeUnits.Remove(defender);
+				_world[defender.Position].Occupant = null; // NullRef here indicates bad unit position
+				_units.Remove(defender);
+				attacker.Owner.DestroyUnit(defender);
 			}
 		}
 
