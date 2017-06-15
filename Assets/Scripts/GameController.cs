@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Model;
@@ -14,7 +14,7 @@ public class GameController : MonoBehaviour
     public int MapSize = 20;
     public int NumberOfMaps = 1;
 
-	public int RoundNumber { get { return _worldController.RoundNumber; } }
+	public int RoundNumber { get { return _worldController != null ? _worldController.RoundNumber : 0; } }
 	private WorldController _worldController;
 
 	public void DoTurn()
@@ -53,7 +53,6 @@ public class GameController : MonoBehaviour
 		
 		var avatar = Instantiate(unitPrefab).GetComponent<UnitAvatar>();			
 		var unit = new Unit(avatar, pos, dir, owner);
-		avatar.SetUnit(unit);
 		
 		if (!_worldController.AddUnit(unit)) // oops! bad unit placement, so delete the unit as if nothing happened
 		{
@@ -62,6 +61,7 @@ public class GameController : MonoBehaviour
 		}
 		else 	// successful placement
 		{
+			avatar.SetUnit(unit);
 			_playerUnitPlaced[owner] = true;	// set player as placed a unit
 			
 			var allPlaced = true;				// check if all players have placed a unit
