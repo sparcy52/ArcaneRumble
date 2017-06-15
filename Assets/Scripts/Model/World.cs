@@ -183,7 +183,6 @@ namespace Model
             Impassable = false;
             Placeable = true;
             Owner = player;
-
         }
         public bool HasObjective()
         {
