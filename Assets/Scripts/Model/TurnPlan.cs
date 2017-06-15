@@ -40,13 +40,14 @@ namespace Model
 		/// <summary>
 		/// Indicates that the given move has been rejected by the WorldController.
 		/// Calling this function will also update the game state by executing the <c>replacement</c> Move.
+		/// Note that the replacement move will also trigger OnAccept
 		/// </summary>
 		/// <param name="rejected">the Move that was proposed, but rejected</param>
 		/// <param name="replacement">the Move that should be executed in <c>rejected's</c> place</param>
 		public void RejectMove(Move rejected, Move replacement)
 		{
 			OnReject(rejected, replacement);
-			ApplyMove(replacement);
+			AcceptMove(replacement);
 			if (--_timeout == 0)
 			{
 				Utils.Printf("Timed out TurnPlan {0} on move {1}", this, rejected);

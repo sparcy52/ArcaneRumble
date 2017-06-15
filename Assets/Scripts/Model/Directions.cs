@@ -99,7 +99,7 @@ namespace Model
 		/// <returns>its mirror</returns>
 		public static RelativeDirection Mirror(this RelativeDirection relative)
 		{
-			return (RelativeDirection) Wrap(-(int) relative);
+			return (RelativeDirection) Wrap(6 -(int) relative);
 		}
 
 

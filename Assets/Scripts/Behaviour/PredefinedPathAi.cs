@@ -13,6 +13,20 @@ namespace Behaviour
 		{
 			return new PredefinedPathPlan(Path, unit, world);
 		}
+
+		/// <summary>
+		/// Allows subclasses to override the path in a procedural manner.
+		/// </summary>
+		/// <returns>the new path to use</returns>
+		protected virtual RelativeDirection[] SetPath()
+		{
+			return Path;
+		}
+
+		private void OnValidate()
+		{
+			Path = SetPath();
+		}
 	}
 
 	public class PredefinedPathPlan : TurnPlan

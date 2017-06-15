@@ -143,7 +143,7 @@ GameObject:
   - component: {fileID: 95189954106883160}
   - component: {fileID: 114223705755936088}
   m_Layer: 0
-  m_Name: Heavy
+  m_Name: med-basiczz
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -681,11 +681,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b573f884c323fa844be5f5283002b637, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHealth: 7
-  MaxEnergy: 4
-  Ai: {fileID: 11400000, guid: 3c3a284c4fc062e4a808ef10c1e262b6, type: 2}
-  MoveSpeed: 4
-  TurnSpeed: 100
+  MaxHealth: 4
+  MaxEnergy: 3
+  Ai: {fileID: 11400000, guid: ee53000eb8caea6408a0e50dc603d908, type: 2}
+  MoveSpeed: 5
+  TurnSpeed: 180
 --- !u!137 &137002257506986638
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

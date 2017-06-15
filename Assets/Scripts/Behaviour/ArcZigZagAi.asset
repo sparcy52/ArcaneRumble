@@ -11,4 +11,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb772f7f8c264475a0a71850f835b739, type: 3}
   m_Name: ArcZigZagAi
   m_EditorClassIdentifier: 
-  Path: 05000000050000000100000001000000
+  Path: 05000000010000000100000005000000
