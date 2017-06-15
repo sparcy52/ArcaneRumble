@@ -6,7 +6,7 @@ using UnityEngine;
 public class DObjective : MonoBehaviour {
     public GameObject CurrentObjective;
     private Hex objectiveHex;
-    private Renderer orenderer;
+    private Renderer[] orenderer;
 
     public void setHex (Hex hex)
     {
@@ -14,13 +14,17 @@ public class DObjective : MonoBehaviour {
     }
 	void Start () {
         CurrentObjective = this.gameObject;
-        orenderer = CurrentObjective.GetComponent<Renderer>();
+        orenderer = CurrentObjective.GetComponentsInChildren<Renderer>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-
+        if(objectiveHex.Owner != null)
+        {
+            orenderer[9].material.color = objectiveHex.Objective.controllingPlayer.Color;
+        }
         //orenderer.material.color = objectiveHex.Owner.Color;
-        orenderer.material.color = Color.red;
+        
+
     }
 }

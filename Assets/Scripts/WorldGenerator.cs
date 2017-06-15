@@ -53,12 +53,12 @@ public class WorldGenerator : MonoBehaviour {
                     {
                         tile.GetComponent<DObjective>().setHex(hex);
                     }
-                    if(hex.Type == HexType.Deploy)
+                   /* if(hex.Type == HexType.Deploy)
                     {
-                        tile.GetComponent<Renderer>().material.color = Color.red;
+                        //tile.GetComponent<Renderer>().material.color = Color.red;
                         //tile.GetComponent<Renderer>().material.color = hex.Owner.Colour
                     }
-                    // Debug.Log(tile.ToString() + w + e);
+                    // Debug.Log(tile.ToString() + w + e);*/
                 }
             }
         }
