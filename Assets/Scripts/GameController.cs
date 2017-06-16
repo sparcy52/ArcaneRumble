@@ -8,7 +8,8 @@ public class GameController : MonoBehaviour
 {	
 	public WorldGenerator WorldGenerator;
 	public Player[] Players = new Player[2];
-	
+	private Dictionary<Player, bool> _playerUnitPlaced; // TODO: refactor resource management into Player class
+
     public int MapSize = 20;
     public int NumberOfMaps = 1;
 
@@ -22,6 +23,11 @@ public class GameController : MonoBehaviour
 	private void Start()
 	{
 		_worldController = new WorldController(WorldGenerator.World);
+		_playerUnitPlaced = new Dictionary<Player, bool>();
+		foreach (var player in Players)
+		{
+			_playerUnitPlaced[player] = false;
+		}
 	}
 
 	private void Update()
@@ -41,27 +47,40 @@ public class GameController : MonoBehaviour
 	/// <returns>true if the operation was successful; false if not</returns>
 	public bool MakeUnit(GameObject unitPrefab, TileVector pos, CardinalDirection dir, Player owner)
 	{
-		UnitAvatar avatar = Instantiate(unitPrefab).GetComponent<UnitAvatar>();
-
-		var rend = avatar.gameObject.GetComponentsInChildren<MeshRenderer>();
-
-		foreach (var r in rend) {
-			foreach (var m in r.materials) {
-				if (m.HasProperty ("_Color")) {
-					m.color = owner.Color;
-				}
-			}
-		}
-			
-		Unit unit = new Unit(avatar, pos, dir, owner);
+		if (_playerUnitPlaced[owner]) return false;	// stop players placing more than one unit
+		
+		var avatar = Instantiate(unitPrefab).GetComponent<UnitAvatar>();			
+		var unit = new Unit(avatar, pos, dir, owner);
 		avatar.SetUnit(unit);
-
-		if (!_worldController.AddUnit(unit))	// oops! bad unit placement, so delete the unit as if nothing happened
+		
+		if (!_worldController.AddUnit(unit)) // oops! bad unit placement, so delete the unit as if nothing happened
 		{
 			Destroy(avatar.gameObject);
 			return false;
 		}
-		else return true;
+		else 	// successful placement
+		{
+			_playerUnitPlaced[owner] = true;	// set player as placed a unit
+			
+			var allPlaced = true;				// check if all players have placed a unit
+			foreach (var placed in _playerUnitPlaced.Values)
+			{
+				if (!placed)
+				{
+					allPlaced = false;
+					break;
+				}
+			}
+			if (allPlaced)						// reset players' placement status and run game
+			{
+				_worldController.DoTurn();
+				foreach (var player in Players)
+				{
+					_playerUnitPlaced[player] = false;
+				}
+			}
+			return true;
+		}
 	}
 	
 	/*
