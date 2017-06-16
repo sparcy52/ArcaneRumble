@@ -280,11 +280,13 @@ namespace Model
 			}
 		}
 		
+#if DEBUG
 		private int _debugFrameCount = 0; 
 	
 		private void DebugLogFrame()
 		{
-			var fname = string.Format("debug/frame{0:00000}.txt", _debugFrameCount++);
+			var fname = string.Format("Debug/frame{0:00000}.txt", _debugFrameCount++);
+			System.IO.Directory.CreateDirectory("Debug");
 			var file = new System.IO.StreamWriter(fname);
 
 			{
@@ -344,7 +346,7 @@ namespace Model
 				foreach (var unit in missingUnits)
 				{
 					UnityEngine.Debug.LogAssertionFormat(
-						"Unmapped Units detected: see file {0}. Please save your debug directory and report to Marc.", 
+						"Unmapped Units detected: see file {0}. Please save your debug directory and report this.", 
 						fname);
 					file.WriteLine(
 						"{0,-8}{1,-9} HP:{2,-3}EP:{3,-3}",unit.Position, unit.Facing, unit.Health, unit.Energy
@@ -358,7 +360,7 @@ namespace Model
 				foreach (var unit in orphanedUnits)
 				{
 					UnityEngine.Debug.LogAssertionFormat(
-						"Orphaned Units detected: see file {0}. Please save your debug directory and report to Marc.", 
+						"Orphaned Units detected: see file {0}. Please save your debug directory and report this.", 
 						fname);
 					file.WriteLine(
 						"{0,-8}{1,-9} HP:{2,-3}EP:{3,-3}",unit.Position, unit.Facing, unit.Health, unit.Energy
@@ -392,4 +394,5 @@ namespace Model
 			}
 		}
 	}
+#endif
 }
