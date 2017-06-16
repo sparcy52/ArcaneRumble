@@ -168,7 +168,7 @@ namespace Model
 		    if (obj == null || GetType() != obj.GetType())
 			    return false;
 
-		    TileVector t = (TileVector) obj;
+		    var t = (TileVector) obj;
 		    return W == t.W && E == t.E;
 	    }
 

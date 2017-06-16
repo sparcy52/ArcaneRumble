@@ -86,6 +86,11 @@ namespace Model
 		{
 			return (RelativeDirection) facing.GetArcLinear(other);
 		}
+		
+		public static RelativeDirection Cross(this RelativeDirection facing, RelativeDirection other)
+		{
+			return Cross((CardinalDirection) facing, (CardinalDirection) other);
+		}
 
 		/// <summary>
 		/// Mirrors a RelativeDirection such that Left switches to Right and vise-versa
@@ -94,7 +99,7 @@ namespace Model
 		/// <returns>its mirror</returns>
 		public static RelativeDirection Mirror(this RelativeDirection relative)
 		{
-			return (RelativeDirection) Wrap(-(int) relative);
+			return (RelativeDirection) Wrap(6 -(int) relative);
 		}
 
 
@@ -146,7 +151,7 @@ namespace Model
 			if (steps > 3) return 3 - steps;
 			else return steps;
 		}
-
+		
 		// INTERNAL UTILITIES
 
 		private static int Wrap(int d)

@@ -1,37 +1,48 @@
-﻿using System;
+﻿﻿using System;
 using UnityEngine;
 using Model;
 
-public class CombatAnimation : IAnimation 
+public class CombatAnimation : SyncedAnimation<CombatAnimation, CombatAnimation>
 {
-	public Unit _otherUnit;
-	public UnitAvatar _unit;
-	public TileVector _attackPosition;
-	private bool seen = false;
-
-	public CombatAnimation (UnitAvatar unit, Unit otherUnit, TileVector destination)
+	private float _elapsed = 0;
+	private int _stage = 0;
+	
+	public CombatAnimation(Unit attacker, Unit defender) : base(attacker.Avatar, defender.Avatar)
 	{
-		_otherUnit = otherUnit;
-		_unit = unit;
-		_attackPosition = destination;
+		
 	}
 
-	public bool ApplyAnimation(float time)
+	public override bool ApplyAnimation(float time)
 	{
-		var otherQueue = _otherUnit._avatar._moveQueue;
-		var thisQueue = _unit._moveQueue;
-		var ownUnit = thisQueue.Peek() as CombatAnimation;
-		var otherUnit = thisQueue.Peek() as CombatAnimation;
-		//Utils.Print (thisQueue.Peek());
-		if (ownUnit != null && otherUnit != null) {
-			seen = true;
-			Utils.Print ("Units Same"+Time.fixedTime);
-//			return true;
-		} 
-		if( otherUnit.seen == true) 
+		if (Sync()) 
 		{
-			Utils.Print ("SAME"+Time.fixedTime);
-			return true;
+			Color color;
+			float flashTime;
+			switch (_stage)
+			{
+				case 0:
+					color = GuiComponents.GetHitPrimaryColor();
+					flashTime = GuiComponents.GetHitPrimaryTime();
+					break;
+				case 1:
+					color = GuiComponents.GetHitSecondaryColor();
+					flashTime = GuiComponents.GetHitSecondaryTime();
+					break;
+				default:
+					Target.ResetPaint();
+					Target.Scale = 1;
+					return true;
+			}
+			if (Target == null) return true;
+			Target.Paint(color);
+			Target.Scale = 1.1f;
+
+			_elapsed += time;
+			if (_elapsed > flashTime)
+			{
+				_stage++;
+				_elapsed = 0;
+			}
 		}
 		return false;
 	}

@@ -1,28 +1,36 @@
 fileFormatVersion: 2
-guid: 6e7965859e94d4f43a02aa43f2c60dfc
-timeCreated: 1493765989
+guid: 633711f3e45e9454cbde586fddce94e6
+timeCreated: 1497511939
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: directionalLight1
-    100002: pCylinder1
-    100004: rocksForStoneHex:pSphere1
-    100006: rocksForStoneHex:pSphere2
-    100008: rocksForStoneHex:rock1:pSphere3
-    100010: rocksForStoneHex:rock3:pSphere2
-    100012: rocksForStoneHex:rock5:pSphere4
-    100014: rocksForStoneHex:rock7:pSphere1
-    100016: //RootNode
+    100002: group1
+    100004: group2
+    100006: pCylinder1
+    100008: rocksForStoneHex:pSphere1
+    100010: rocksForStoneHex:pSphere2
+    100012: rocksForStoneHex:rock1:pSphere3
+    100014: rocksForStoneHex:rock3:pSphere2
+    100016: rocksForStoneHex:rock5:pSphere4
+    100018: rocksForStoneHex:rock7:pSphere1
+    100020: //RootNode
+    100022: spawnPointTop:pCylinder1
+    100024: spawnPointTop:pCylinder2
     400000: directionalLight1
-    400002: pCylinder1
-    400004: rocksForStoneHex:pSphere1
-    400006: rocksForStoneHex:pSphere2
-    400008: rocksForStoneHex:rock1:pSphere3
-    400010: rocksForStoneHex:rock3:pSphere2
-    400012: rocksForStoneHex:rock5:pSphere4
-    400014: rocksForStoneHex:rock7:pSphere1
-    400016: //RootNode
+    400002: group1
+    400004: group2
+    400006: pCylinder1
+    400008: rocksForStoneHex:pSphere1
+    400010: rocksForStoneHex:pSphere2
+    400012: rocksForStoneHex:rock1:pSphere3
+    400014: rocksForStoneHex:rock3:pSphere2
+    400016: rocksForStoneHex:rock5:pSphere4
+    400018: rocksForStoneHex:rock7:pSphere1
+    400020: //RootNode
+    400022: spawnPointTop:pCylinder1
+    400024: spawnPointTop:pCylinder2
     2300000: pCylinder1
     2300002: rocksForStoneHex:pSphere1
     2300004: rocksForStoneHex:pSphere2
@@ -30,6 +38,8 @@ ModelImporter:
     2300008: rocksForStoneHex:rock3:pSphere2
     2300010: rocksForStoneHex:rock5:pSphere4
     2300012: rocksForStoneHex:rock7:pSphere1
+    2300014: spawnPointTop:pCylinder1
+    2300016: spawnPointTop:pCylinder2
     3300000: pCylinder1
     3300002: rocksForStoneHex:pSphere1
     3300004: rocksForStoneHex:pSphere2
@@ -37,13 +47,17 @@ ModelImporter:
     3300008: rocksForStoneHex:rock3:pSphere2
     3300010: rocksForStoneHex:rock5:pSphere4
     3300012: rocksForStoneHex:rock7:pSphere1
-    4300000: pCylinder1
+    3300014: spawnPointTop:pCylinder1
+    3300016: spawnPointTop:pCylinder2
+    4300000: rocksForStoneHex:rock1:pSphere3
     4300002: rocksForStoneHex:rock5:pSphere4
-    4300004: rocksForStoneHex:rock1:pSphere3
-    4300006: rocksForStoneHex:rock7:pSphere1
-    4300008: rocksForStoneHex:rock3:pSphere2
-    4300010: rocksForStoneHex:pSphere2
-    4300012: rocksForStoneHex:pSphere1
+    4300004: rocksForStoneHex:pSphere1
+    4300006: pCylinder1
+    4300008: rocksForStoneHex:pSphere2
+    4300010: rocksForStoneHex:rock3:pSphere2
+    4300012: rocksForStoneHex:rock7:pSphere1
+    4300014: spawnPointTop:pCylinder2
+    4300016: spawnPointTop:pCylinder1
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -90,7 +104,7 @@ ModelImporter:
     normalSmoothAngle: 0
     normalImportMode: 1
     tangentImportMode: 3
-  importAnimation: 0
+  importAnimation: 1
   copyAvatar: 0
   humanDescription:
     serializedVersion: 2

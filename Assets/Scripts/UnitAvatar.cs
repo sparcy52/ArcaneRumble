@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Model;
@@ -23,12 +23,11 @@ public class UnitAvatar : MonoBehaviour
 
 	// Unity components
 	public Animator Animator { get; protected set; }
-	//public Transform Transform { get; protected set; }
+	private MeshRenderer[] _renderers;
 
 	// Movement state trackers
-	public Queue<IAnimation> _moveQueue = new Queue<IAnimation>();
-
-	private bool _kill = false;
+	private Queue<IAnimation> _animQueue = new Queue<IAnimation>();
+	public IAnimation CurrentAnimation { get { return _animQueue.Count > 0 ? _animQueue.Peek() : null; } }
 
 	public Quaternion Rotation
 	{
@@ -40,6 +39,19 @@ public class UnitAvatar : MonoBehaviour
 	{
 		set { transform.position = value; }
 		get { return transform.position; }
+	}
+
+	private Vector3 _initScale;
+	private float _scaleMod = 1;
+	
+	public float Scale
+	{
+		set
+		{
+			_scaleMod = value;
+			transform.localScale = _initScale * value;
+		}
+		get { return _scaleMod; }
 	}
 
 	public float HpPercent {
@@ -54,32 +66,63 @@ public class UnitAvatar : MonoBehaviour
 	{
 		// IMPLEMENTATION NOTE: defer functionality from Start to SetUnit
 		Animator = GetComponent<Animator>();
+		_initScale = transform.localScale;
 	}
 
+	/// <summary>
+	/// Effectively a constructor to be called after GameObjects with this Script are instantiated.
+	/// </summary>
+	/// <param name="unit">The Unit to base this off</param>
+	public void SetUnit(Unit unit)
+	{
+		if (unit.Avatar != this) throw new ArgumentException("Assigned Unit already has an Avatar");
+		_unit = unit;
+		Position = unit.Position.ToVector3();
+		Rotation = unit.Facing.GetBearingRotation();		
+
+		// make UI elements
+		_hpBar = Instantiate(GuiComponents.GetHpBar ());
+		_eBar = Instantiate(GuiComponents.GetEpBar ());
+		_hpScript =	_hpBar.GetComponent<BarScript> ();
+		_eScript =	_eBar.GetComponent<BarScript> ();
+		
+		_renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
+		ResetPaint();
+	}
+	
 	// Update is called once per frame
 	void Update () {
 		if (_unit == null) return;
-//		HpPercent = Mathf.Clamp((float) _unit.Health / _unit.MaxHealth,0f ,1f);
-		Debug.Log ("current health: "+_unit.Health);
-		Debug.Log ("Max health: "+_unit.MaxHealth);
-		Debug.Log ("Percent: "+HpPercent);
+
 		_hpBar.transform.position = new Vector3 (this.Position.x, this.Position.y+0.6f, this.Position.z-1f);
 		_hpScript.SetPercent (HpPercent);
-//		Debug.Log (HpPercent);
-//		EpPercent = (float) _unit.Energy / _unit.MaxEnergy;
-//		Debug.Log (_unit.Energy);
 		_eBar.transform.position = new Vector3 (this.Position.x, this.Position.y+0.4f, this.Position.z-1f);
 		_eScript.SetPercent (EpPercent);
-
 	}
 
+	public void Paint(Color color)
+	{
+		foreach (var r in _renderers) {
+			foreach (var m in r.materials) {
+				if (m.HasProperty ("_Color"))
+				{
+					m.color = color;
+				}
+			}
+		}
+	}
+
+	public void ResetPaint()
+	{
+		Paint(_unit.Owner.Color);
+	}
 
 	public void Kill()
 	{
-		_kill = true;
+		_animQueue.Enqueue(new DestroyAnimation(this));
 	}
 
-	void CleanUp(){
+	public void Destroy(){
 		Destroy(gameObject);
 		Destroy (_hpBar);
 		Destroy (_eBar);
@@ -87,52 +130,24 @@ public class UnitAvatar : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		if (_moveQueue.Count > 0)
+		if (_animQueue.Count > 0)
 		{
-			if (_moveQueue.Peek().ApplyAnimation(Time.deltaTime))
+			if (_animQueue.Peek().ApplyAnimation(Time.deltaTime))
 			{
-				_moveQueue.Dequeue();
-			}
-		} 
-		else if (_kill)
-		{
-			CleanUp ();
-			Debug.Log ("killed");
-		}
-	}
-
-	public void SetUnit(Unit unit)
-	{
-		_unit = unit;
-		Position = unit.Position.ToVector3();
-		Rotation = unit.Facing.GetBearingRotation();
-		
-		// paint unit
-		var rend = gameObject.GetComponentsInChildren<MeshRenderer>();
-		foreach (var r in rend) {
-			foreach (var m in r.materials) {
-				if (m.HasProperty ("_Color")) {
-					m.color = _unit.Owner.Color;
-				}
+				_animQueue.Dequeue();
 			}
 		}
-
-		// make hp bar
-		_hpBar = Instantiate(GuiComponents.GetHpBar ());
-		_eBar = Instantiate(GuiComponents.GetEpBar ());
-		_hpScript =	_hpBar.GetComponent<BarScript> ();
-		_eScript =	_eBar.GetComponent<BarScript> ();
 	}
 
 	public void ApplyMove(Move move)
 	{
 		if (move.IsHalt()) return;
-		_moveQueue.Enqueue(new MoveAnimation(this, move.Destination, move.Unit.Facing.Turn(move.Direction)));
+		_animQueue.Enqueue(new MoveAnimation(this, move.Destination, move.Unit.Facing.Turn(move.Direction)));
 	}
 
 	public void ApplyCombat(Unit otherUnit, TileVector attackPosition)
 	{
 		//if (move.IsHalt()) return;
-		_moveQueue.Enqueue(new CombatAnimation(this, otherUnit, attackPosition));
+		_animQueue.Enqueue(new CombatAnimation(_unit, otherUnit));
 	}
 }

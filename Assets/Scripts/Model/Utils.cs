@@ -10,7 +10,7 @@ namespace Model
 		/// <param name="obj">object print</param>
 		public static void Print(object obj)
 		{
-			UnityEngine.MonoBehaviour.print(obj);
+			UnityEngine.Debug.Log(obj);
 		}
 
 		/// <summary>
