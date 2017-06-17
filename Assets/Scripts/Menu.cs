@@ -12,6 +12,7 @@ public class Menu : MonoBehaviour {
 	
 	// Update is called once per frame
 	public void startGame () {
+   
         SceneManager.LoadScene("game");
 	}
 
