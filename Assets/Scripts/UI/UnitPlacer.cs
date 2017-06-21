@@ -11,6 +11,7 @@ public class UnitPlacer : MonoBehaviour {
 	
 	public GameController GameController;
 	public Player Player;
+	public GameObject PreviewTile;
 
 	private GameObject[] Units	// shorthand alias
 	{
@@ -39,6 +40,7 @@ public class UnitPlacer : MonoBehaviour {
 
 	private Transform _t;
 	private GameObject _preview;
+	private List<GameObject> _pathPreview = new List<GameObject>();
 	
 	private int _selectedUnit 					= -1;
 	private TileVector _selectedPos 			= new TileVector(0, 0);
@@ -76,6 +78,7 @@ public class UnitPlacer : MonoBehaviour {
 						_selectedUnit = -1;		// unit creation sucessful - deallocate preview
 						Destroy(_preview);
 						_preview = null;
+						UpdatePathPreview();
 					}
 				}
 				else 					// select another unit
@@ -85,8 +88,32 @@ public class UnitPlacer : MonoBehaviour {
 					_preview = Instantiate(Units[i], _t, false);
 					_preview.transform.localPosition = Vector3.zero;
 					_preview.transform.localRotation = Quaternion.identity;
+					UpdatePathPreview();
 					break;
 				}
+			}
+		}
+	}
+
+	private void UpdatePathPreview()
+	{
+		for (var i = _pathPreview.Count - 1; i >= 0; i--)		// clean up old preview
+		{
+			Destroy(_pathPreview[i]);
+			_pathPreview.RemoveAt(i);
+		}
+
+		if (_selectedUnit >= 0)									// build new one
+		{
+			var avatar = Units[_selectedUnit].GetComponent<UnitAvatar>();
+			var unit = avatar.CreateUnit(_selectedPos, _selectedDir, Player);	// disposable unit instance
+			var ai = avatar.Ai;
+			
+			foreach (var step in ai.GetPreview(unit, GameController.World))
+			{
+				var highlight = Instantiate(PreviewTile, _t, true);
+				highlight.transform.position = step.Pos.ToVector3();
+				_pathPreview.Add(highlight);
 			}
 		}
 	}
@@ -94,12 +121,14 @@ public class UnitPlacer : MonoBehaviour {
 	private void MovePos(CardinalDirection direction) {
 		_selectedPos = _selectedPos + direction;
 		_t.position = _selectedPos.ToVector3();
+		UpdatePathPreview();
 	}
 
 	private void RotateDir(RelativeDirection direction)
 	{
 		_selectedDir = _selectedDir.Turn(direction);
 		_t.rotation = _selectedDir.GetBearingRotation();
+		UpdatePathPreview();
 	}
 
 	private void OnValidate()

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Model;
 using UnityEngine;
 
@@ -12,6 +13,32 @@ namespace Behaviour
 		public override TurnPlan GetMovementPlan(Unit unit, World world)
 		{
 			return new PredefinedPathPlan(Path, unit, world);
+		}
+
+		public override StepPreview[] GetPreview(Unit unit, World world)
+		{
+			var pos = unit.Position;
+			var facing = unit.Facing;
+			var energy = unit.MaxEnergy;
+
+			var index = 0;
+			var preview = new List<StepPreview>();
+
+			for (var round = 0; round < 3; round++)		// some code duplication in here. ideally TurnPlans would 
+			{											// have a more functional design, but that is too much work now
+				while (energy > 0) 						
+				{	 									
+					facing = facing.Turn(Path[index]);
+					pos += facing;
+					preview.Add(new StepPreview(pos, round));
+
+					index = (index + 1) % Path.Length;
+					energy -= 2; // assumes that moves cost 2 energy
+				}
+				energy = unit.MaxEnergy;
+			}
+			
+			return preview.ToArray();
 		}
 
 		/// <summary>

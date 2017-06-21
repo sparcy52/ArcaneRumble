@@ -70,12 +70,23 @@ public class UnitAvatar : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Effectively a constructor to be called after GameObjects with this Script are instantiated.
+	/// Create a Model Unit which is specified by the parameters of this Avatar.
 	/// </summary>
-	/// <param name="unit">The Unit to base this off</param>
+	public Unit CreateUnit(TileVector position, CardinalDirection facing, Player owner)
+	{
+		return new Unit(this, position, facing, owner);
+	}
+	
+	/// <summary>
+	/// Links this Avatar to a Unit which it represents. This serves as a constructor in practice, 
+	/// moving this class from a template which defines a Unit, to a visual representation of it.
+	/// </summary>
+	/// <param name="unit">The Unit to link this too</param>
 	public void SetUnit(Unit unit)
 	{
-		if (unit.Avatar != this) throw new ArgumentException("Assigned Unit already has an Avatar");
+		if (unit.Avatar != this) throw new ArgumentException("Assigned Unit has a different Avatar");
+		if (_unit != null) throw new ArgumentException("This Avatar has already been assigned a Unit");
+		
 		_unit = unit;
 		Position = unit.Position.ToVector3();
 		Rotation = unit.Facing.GetBearingRotation();		

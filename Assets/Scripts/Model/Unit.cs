@@ -33,6 +33,9 @@ namespace Model
 
 		public Unit (UnitAvatar avatar, TileVector position, CardinalDirection facing, Player owner)
 		{
+			// IMPLEMENTATION NOTE: Unit construction should not have any side effects. if you need to keep track
+			//						of new units being created, you should call that from WorldController.AddUnit. 
+			
 			Avatar = avatar;
 
 			Position = position;

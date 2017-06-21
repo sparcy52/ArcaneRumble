@@ -22,4 +22,28 @@ public abstract class UnitAi : ScriptableObject
 	/// <param name="world">the game World which the Unit is in</param>
 	/// <returns>a MovementPlan for this Unit, for the current turn</returns>
 	public abstract TurnPlan GetMovementPlan(Unit unit, World world);
+
+	/// <summary>
+	/// Estimate what cells the Unit will traverse given its next movement plan.
+	/// Optional method. Base implementation returns an array of zero.
+	/// </summary>
+	/// <param name="unit">the Unit to construct the move for</param>
+	/// <param name="world">the game World which the Unit is in</param>
+	/// <returns>Estimated results of calls to GetMovementPlan</returns>
+	public virtual StepPreview[] GetPreview(Unit unit, World world)
+	{
+		return new StepPreview[0];
+	}
+}
+
+public struct StepPreview
+{
+	public readonly TileVector Pos;
+	public readonly int Index;
+	
+	public StepPreview(TileVector pos, int index)
+	{
+		Pos = pos;
+		Index = index;
+	}
 }

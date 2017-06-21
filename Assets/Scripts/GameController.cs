@@ -7,6 +7,7 @@ using Random = UnityEngine.Random;
 public class GameController : MonoBehaviour
 {	
 	public WorldGenerator WorldGenerator;
+	public World World { get { return WorldGenerator.World; }}
 	
 	public Player[] Players = new Player[2];
 	private Dictionary<Player, bool> _playerUnitPlaced; // TODO: refactor resource management into Player class
@@ -52,7 +53,7 @@ public class GameController : MonoBehaviour
 		if (_playerUnitPlaced[owner]) return false;	// stop players placing more than one unit
 		
 		var avatar = Instantiate(unitPrefab).GetComponent<UnitAvatar>();			
-		var unit = new Unit(avatar, pos, dir, owner);
+		var unit = avatar.CreateUnit(pos, dir, owner);
 		
 		if (!_worldController.AddUnit(unit)) // oops! bad unit placement, so delete the unit as if nothing happened
 		{
