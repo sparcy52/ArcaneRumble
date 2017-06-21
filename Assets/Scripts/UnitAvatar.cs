@@ -10,7 +10,7 @@ public class UnitAvatar : MonoBehaviour
 	public int MaxEnergy;
 
 	private GameObject _hpBar;
-	private GameObject _eBar;
+	private GameObject _epBar;
 	private Unit _unit;
 	private BarScript _hpScript;
 	private BarScript _eScript;
@@ -72,9 +72,9 @@ public class UnitAvatar : MonoBehaviour
 	/// <summary>
 	/// Create a Model Unit which is specified by the parameters of this Avatar.
 	/// </summary>
-	public Unit CreateUnit(TileVector position, CardinalDirection facing, Player owner)
+	public Unit CreateUnit(Player owner, TileVector position, CardinalDirection facing, bool mirrored)
 	{
-		return new Unit(this, position, facing, owner);
+		return new Unit(this, owner, position, facing, mirrored);
 	}
 	
 	/// <summary>
@@ -93,9 +93,9 @@ public class UnitAvatar : MonoBehaviour
 
 		// make UI elements
 		_hpBar = Instantiate(GuiComponents.GetHpBar ());
-		_eBar = Instantiate(GuiComponents.GetEpBar ());
+		_epBar = Instantiate(GuiComponents.GetEpBar ());
 		_hpScript =	_hpBar.GetComponent<BarScript> ();
-		_eScript =	_eBar.GetComponent<BarScript> ();
+		_eScript =	_epBar.GetComponent<BarScript> ();
 		
 		_renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
 		ResetPaint();
@@ -107,7 +107,7 @@ public class UnitAvatar : MonoBehaviour
 
 		_hpBar.transform.position = new Vector3 (this.Position.x, this.Position.y+0.6f, this.Position.z-1f);
 		_hpScript.SetPercent (HpPercent);
-		_eBar.transform.position = new Vector3 (this.Position.x, this.Position.y+0.4f, this.Position.z-1f);
+		_epBar.transform.position = new Vector3 (this.Position.x, this.Position.y+0.4f, this.Position.z-1f);
 		_eScript.SetPercent (EpPercent);
 	}
 
@@ -136,7 +136,7 @@ public class UnitAvatar : MonoBehaviour
 	public void Destroy(){
 		Destroy(gameObject);
 		Destroy (_hpBar);
-		Destroy (_eBar);
+		Destroy (_epBar);
 	}
 
 	void FixedUpdate()
@@ -153,7 +153,7 @@ public class UnitAvatar : MonoBehaviour
 	public void ApplyMove(Move move)
 	{
 		if (move.IsHalt()) return;
-		_animQueue.Enqueue(new MoveAnimation(this, move.Destination, move.Unit.Facing.Turn(move.Direction)));
+		_animQueue.Enqueue(new MoveAnimation(this, move.Destination, move.Unit.Turn(move.Direction)));
 	}
 
 	public void ApplyCombat(Unit otherUnit, TileVector attackPosition)

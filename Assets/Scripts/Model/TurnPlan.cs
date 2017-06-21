@@ -119,7 +119,7 @@ namespace Model
 
 		protected Move Turn(CardinalDirection cardinal)
 		{
-			return this.Turn(Unit.Facing.Cross(cardinal));
+			return this.Turn(Unit.Cross(cardinal));
 		}
 
 		protected Move Step(RelativeDirection relative)
@@ -129,7 +129,7 @@ namespace Model
 
 		protected Move Step(CardinalDirection cardinal)
 		{
-			return this.Step(Unit.Facing.Cross(cardinal));
+			return this.Step(Unit.Cross(cardinal));
 		}
 	}
 }

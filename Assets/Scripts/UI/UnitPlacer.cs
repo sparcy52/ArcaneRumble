@@ -37,34 +37,44 @@ public class UnitPlacer : MonoBehaviour {
 	
 	public KeyCode RotateAnticlockwiseKey		= KeyCode.Z;
 	public KeyCode RotateClockwiseKey			= KeyCode.X;
+	
+	public KeyCode MirrorToggleKey				= KeyCode.C;
 
 	private Transform _t;
 	private GameObject _preview;
-	private List<GameObject> _pathPreview = new List<GameObject>();
+	private List<GameObject> _pathPreview; 		
 	
 	private int _selectedUnit 					= -1;
 	private TileVector _selectedPos 			= new TileVector(0, 0);
 	private CardinalDirection _selectedDir 		= CardinalDirection.North;
+	private bool _selectedMirrored 				= false;
 
 	// Use this for initialization
 	void Start () 
 	{
-		_t = GetComponent<Transform> ();
+		_t = GetComponent<Transform>();
+		_pathPreview = new List<GameObject>();
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
 		// MOVEMENT
-		if (Input.GetKeyDown(MoveNorthKey)) 	MovePos(CardinalDirection.North);
-		if (Input.GetKeyDown(MoveNortheastKey)) MovePos(CardinalDirection.Northeast);
-		if (Input.GetKeyDown(MoveSoutheastKey)) MovePos(CardinalDirection.Southeast);
-		if (Input.GetKeyDown(MoveSouthKey)) 	MovePos(CardinalDirection.South);
-		if (Input.GetKeyDown(MoveSouthwestKey)) MovePos(CardinalDirection.Southwest);
-		if (Input.GetKeyDown(MoveNorthwestKey)) MovePos(CardinalDirection.Northwest);
+		if (Input.GetKeyDown(MoveNorthKey)) 			MovePos(CardinalDirection.North);
+		if (Input.GetKeyDown(MoveNortheastKey)) 		MovePos(CardinalDirection.Northeast);
+		if (Input.GetKeyDown(MoveSoutheastKey)) 		MovePos(CardinalDirection.Southeast);
+		if (Input.GetKeyDown(MoveSouthKey)) 			MovePos(CardinalDirection.South);
+		if (Input.GetKeyDown(MoveSouthwestKey)) 		MovePos(CardinalDirection.Southwest);
+		if (Input.GetKeyDown(MoveNorthwestKey)) 		MovePos(CardinalDirection.Northwest);
 		
-		if (Input.GetKeyDown(RotateAnticlockwiseKey)) RotateDir(RelativeDirection.ForwardLeft);
-		if (Input.GetKeyDown(RotateClockwiseKey)) 	  RotateDir(RelativeDirection.ForwardRight);
+		if (Input.GetKeyDown(RotateAnticlockwiseKey)) 	RotateDir(RelativeDirection.ForwardLeft);
+		if (Input.GetKeyDown(RotateClockwiseKey)) 	  	RotateDir(RelativeDirection.ForwardRight);
+
+		if (Input.GetKeyDown(MirrorToggleKey))
+		{
+			_selectedMirrored = !_selectedMirrored;
+			UpdatePathPreview();
+		}
 
 		// UNIT SELECTION / PLACEMENT
 		for (var i = 0; i < UnitSelectionKeys.Length; i++)
@@ -73,7 +83,7 @@ public class UnitPlacer : MonoBehaviour {
 			{
 				if (_selectedUnit == i)	// place unit on double tap of selection key
 				{
-					if (GameController.MakeUnit(Units[i], _selectedPos, _selectedDir, Player))
+					if (GameController.MakeUnit(Units[i], Player, _selectedPos, _selectedDir, _selectedMirrored))
 					{
 						_selectedUnit = -1;		// unit creation sucessful - deallocate preview
 						Destroy(_preview);
@@ -106,7 +116,7 @@ public class UnitPlacer : MonoBehaviour {
 		if (_selectedUnit >= 0)									// build new one
 		{
 			var avatar = Units[_selectedUnit].GetComponent<UnitAvatar>();
-			var unit = avatar.CreateUnit(_selectedPos, _selectedDir, Player);	// disposable unit instance
+			var unit = avatar.CreateUnit(Player, _selectedPos, _selectedDir, _selectedMirrored);	// need for ai plan 
 			var ai = avatar.Ai;
 			
 			foreach (var step in ai.GetPreview(unit, GameController.World))

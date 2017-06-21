@@ -11,6 +11,7 @@ namespace Model
 		// Accessors
 		public TileVector Position { get; private set; }
 		public CardinalDirection Facing { get; private set; }
+		public bool Mirrored { get; private set; }				// experimental
 
 		public TurnPlan LastMove { get; private set; }
 		private TurnPlan _currentMove;
@@ -31,13 +32,15 @@ namespace Model
 		// Private fields
 		public readonly UnitAvatar Avatar;	// Unity representation
 
-		public Unit (UnitAvatar avatar, TileVector position, CardinalDirection facing, Player owner)
+		public Unit (UnitAvatar avatar, Player owner, TileVector position, CardinalDirection facing, bool mirrored)
 		{
 			// IMPLEMENTATION NOTE: Unit construction should not have any side effects. if you need to keep track
 			//						of new units being created, you should call that from WorldController.AddUnit. 
-			
 			Avatar = avatar;
 
+			_moveMethod = Avatar.Ai.GetMovementPlan;
+			Owner = owner;
+			
 			Position = position;
 			Facing = facing;
 
@@ -47,9 +50,7 @@ namespace Model
 			MaxEnergy = Avatar.MaxEnergy;
 			Energy = MaxEnergy;
 
-			_moveMethod = Avatar.Ai.GetMovementPlan;
-			Owner = owner;
-
+			Mirrored = mirrored;
 		}
 
 		public TurnPlan GetMovementPlan(World world)
@@ -59,6 +60,32 @@ namespace Model
 			return _currentMove;
 		}
 
+		/// <summary>
+		/// Gets the Direction that this Unit would face after receiving a a turn in the given direction
+		/// Note that this does not modify the Unit in any way, and should be used for analytic purposes only.
+		/// This method takes mirroring into account - use with caution
+		/// </summary>
+		/// <param name="relative">the RelativeDirection to turn</param>
+		/// <returns>the CardinalDirection that this Unit would face after turning</returns>
+		public CardinalDirection Turn(RelativeDirection relative)
+		{
+			var trueDirection = Mirrored ? relative.Mirror() : relative;
+			return Facing.Turn(trueDirection);
+		}
+
+		/// <summary>
+		/// Gets the Direction that this Unit would need to turn to face the given direction.
+		/// Note that this does not modify the Unit in any way, and should be used for analytic purposes only.
+		/// This method takes mirroring into account - use with caution
+		/// </summary>
+		/// <param name="to">the CardinalDirection that this Unit would face after turning</param>
+		/// <returns>the RelativeDirection to turn to face the Direction</returns>
+		public RelativeDirection Cross(CardinalDirection to)
+		{
+			var trueDirection = Mirrored ? to.Turn(RelativeDirection.Back) : to;
+			return Facing.Cross(trueDirection);
+		}
+		
 		public bool IsDead()
 		{
 			return Health <= 0;
@@ -71,13 +98,11 @@ namespace Model
 		
 		public bool CanMove()
 		{
-			// TODO: this will probably need refinement!
 			return Energy > 0;
 		}
 
 		public void Reset()
 		{
-			// TODO: refine
 			Energy = MaxEnergy;
 		}
 
@@ -88,7 +113,7 @@ namespace Model
 
 			Avatar.ApplyMove(move); // animate avatar (do this first, as it needs to read fields here)
 
-			Facing = Facing.Turn(move.Direction);
+			Facing = Turn(move.Direction);
 			Position = move.Destination;
 			Energy -= move.EnergyCost;
 		}
@@ -103,11 +128,10 @@ namespace Model
 			// turn to face other unit
 			var combatDirection = Position.GetApproximateDirectionTo(other.Position);
 			if (!combatDirection.HasValue) throw new Exception();	// could not face other unit - probably same pos
-
-			Move.Turn(_currentMove, combatDirection.Value.Cross(Facing)).Accept();	// bit gross, but should be fine
 			
 			if (this.Energy <= 0) return;	// skip combat
 			
+			Move.Turn(_currentMove, Cross(combatDirection.Value)).Accept();	// bit gross, but should be fine
 			Avatar.ApplyCombat(other,other.Position);
 			
 			// do combat - deal damage to other unit, lose energy

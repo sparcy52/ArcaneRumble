@@ -28,7 +28,7 @@ namespace Behaviour
 			{											// have a more functional design, but that is too much work now
 				while (energy > 0) 						
 				{	 									
-					facing = facing.Turn(Path[index]);
+					facing = facing.Turn(unit.Mirrored ? Path[index].Mirror() : Path[index]);
 					pos += facing;
 					preview.Add(new StepPreview(pos, round));
 
