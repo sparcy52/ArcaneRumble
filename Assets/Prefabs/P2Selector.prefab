@@ -175,6 +175,7 @@ MonoBehaviour:
   CustomSkin1: {fileID: 0}
   GameController: {fileID: 0}
   Player: {fileID: 0}
+  PreviewTile: {fileID: 1022852544639704}
   UnitSelectionKeys: 380000003900000030000000
   MoveNorthKey: 105
   MoveNortheastKey: 111
@@ -184,3 +185,4 @@ MonoBehaviour:
   MoveNorthwestKey: 117
   RotateAnticlockwiseKey: 44
   RotateClockwiseKey: 46
+  MirrorToggleKey: 47

@@ -174,11 +174,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CustomSkin1: {fileID: 0}
   GameController: {fileID: 0}
-  PlayerNum: 0
-  Units:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  Player: {fileID: 0}
+  PreviewTile: {fileID: 1150026321821944}
   UnitSelectionKeys: 310000003200000033000000
   MoveNorthKey: 119
   MoveNortheastKey: 101
@@ -188,3 +185,4 @@ MonoBehaviour:
   MoveNorthwestKey: 113
   RotateAnticlockwiseKey: 122
   RotateClockwiseKey: 120
+  MirrorToggleKey: 99
