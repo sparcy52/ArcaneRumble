@@ -22,7 +22,7 @@ public abstract class UnitAi : ScriptableObject
 	/// <param name="world">the game World which the Unit is in</param>
 	/// <returns>a MovementPlan for this Unit, for the current turn</returns>
 	public abstract TurnPlan GetMovementPlan(Unit unit, World world);
-
+	
 	/// <summary>
 	/// Estimate what cells the Unit will traverse given its next movement plan.
 	/// Optional method. Base implementation returns an array of zero.
@@ -33,6 +33,17 @@ public abstract class UnitAi : ScriptableObject
 	public virtual StepPreview[] GetPreview(Unit unit, World world)
 	{
 		return new StepPreview[0];
+	}
+
+	/// <summary>
+	/// Used to improve Unit placement ergonomics. When the Unit is mirrored prior to placement,
+	/// apply this rotation to it (or its mirror, if un-mirroing) to help align the paths.
+	/// Optional method. Base implementation returns RelativeDirection.Foward.
+	/// </summary>
+	/// <returns>a hint to simplify unit mirroring during placement</returns>
+	public virtual RelativeDirection PreviewMirrorHint()
+	{
+		return RelativeDirection.Forward;
 	}
 }
 

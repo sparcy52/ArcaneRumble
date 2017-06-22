@@ -9,6 +9,7 @@ namespace Behaviour
 	public class PredefinedPathAi : UnitAi
 	{
 		public RelativeDirection[] Path;
+		public RelativeDirection MirrorHint;
 		
 		public override TurnPlan GetMovementPlan(Unit unit, World world)
 		{
@@ -41,6 +42,11 @@ namespace Behaviour
 			return preview.ToArray();
 		}
 
+		public override RelativeDirection PreviewMirrorHint()
+		{
+			return MirrorHint;
+		}
+
 		/// <summary>
 		/// Allows subclasses to override the path in a procedural manner.
 		/// </summary>
@@ -48,6 +54,15 @@ namespace Behaviour
 		protected virtual RelativeDirection[] SetPath()
 		{
 			return Path;
+		}
+		
+		/// <summary>
+		/// Allows subclasses to override the mirror hint in a procedural manner.
+		/// </summary>
+		/// <returns>the new mirror hint to use</returns>
+		protected virtual RelativeDirection SetMirrorHint()
+		{
+			return MirrorHint;
 		}
 
 		private void OnValidate()

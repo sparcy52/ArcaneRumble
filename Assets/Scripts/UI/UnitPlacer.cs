@@ -70,11 +70,8 @@ public class UnitPlacer : MonoBehaviour {
 		if (Input.GetKeyDown(RotateAnticlockwiseKey)) 	RotateDir(RelativeDirection.ForwardLeft);
 		if (Input.GetKeyDown(RotateClockwiseKey)) 	  	RotateDir(RelativeDirection.ForwardRight);
 
-		if (Input.GetKeyDown(MirrorToggleKey))
-		{
-			_selectedMirrored = !_selectedMirrored;
-			UpdatePathPreview();
-		}
+		if (Input.GetKeyDown(MirrorToggleKey)) 			ToggleMirror();
+
 
 		// UNIT SELECTION / PLACEMENT
 		for (var i = 0; i < UnitSelectionKeys.Length; i++)
@@ -115,7 +112,7 @@ public class UnitPlacer : MonoBehaviour {
 
 		if (_selectedUnit >= 0)									// build new one
 		{
-			var avatar = Units[_selectedUnit].GetComponent<UnitAvatar>();
+			var avatar = SelectedAvatar();
 			var unit = avatar.CreateUnit(Player, _selectedPos, _selectedDir, _selectedMirrored);	// need for ai plan 
 			var ai = avatar.Ai;
 			
@@ -128,6 +125,12 @@ public class UnitPlacer : MonoBehaviour {
 		}
 	}
 
+	private UnitAvatar SelectedAvatar()
+	{
+		if (_selectedUnit <= -1) return null;
+		else return Units[_selectedUnit].GetComponent<UnitAvatar>();
+	}
+
 	private void MovePos(CardinalDirection direction) {
 		_selectedPos = _selectedPos + direction;
 		_t.position = _selectedPos.ToVector3();
@@ -138,6 +141,17 @@ public class UnitPlacer : MonoBehaviour {
 	{
 		_selectedDir = _selectedDir.Turn(direction);
 		_t.rotation = _selectedDir.GetBearingRotation();
+		UpdatePathPreview();
+	}
+	
+	private void ToggleMirror() 
+	{
+		if (_selectedUnit >= 0)
+		{
+			var mirrorHint = SelectedAvatar().Ai.PreviewMirrorHint();
+			RotateDir(_selectedMirrored ? mirrorHint.Mirror() : mirrorHint);
+		}
+		_selectedMirrored = !_selectedMirrored;
 		UpdatePathPreview();
 	}
 
