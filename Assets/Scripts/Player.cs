@@ -42,6 +42,7 @@ public sealed class Player : MonoBehaviour
 	public void DeployUnit(Unit unit)
 	{
 		if (unit.Owner != this || _activeUnits.Contains(unit)) throw new ArgumentException();
+		TotalDeployedUnits++;
 		_activeUnits.Add(unit);
 	}
 	
