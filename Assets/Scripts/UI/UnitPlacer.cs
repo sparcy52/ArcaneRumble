@@ -7,10 +7,10 @@ using UnityEngine.UI;
 
 public class UnitPlacer : MonoBehaviour {
 
-	public GUISkin CustomSkin1;
-	
 	public GameController GameController;
 	public Player Player;
+	private MeshRenderer[] _renderers;
+
 
 	private GameObject[] Units	// shorthand alias
 	{
@@ -48,6 +48,8 @@ public class UnitPlacer : MonoBehaviour {
 	void Start () 
 	{
 		_t = GetComponent<Transform> ();
+		_renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
+		ResetPaint ();
 	}
 	
 	// Update is called once per frame
@@ -68,7 +70,7 @@ public class UnitPlacer : MonoBehaviour {
 		for (var i = 0; i < UnitSelectionKeys.Length; i++)
 		{
 			if (Input.GetKeyDown(UnitSelectionKeys[i]))
-			{
+			{	
 				if (_selectedUnit == i)	// place unit on double tap of selection key
 				{
 					if (GameController.MakeUnit(Units[i], _selectedPos, _selectedDir, Player))
@@ -89,6 +91,26 @@ public class UnitPlacer : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	public void Paint(Color color)
+	{
+		foreach (var r in _renderers) {
+			foreach (var m in r.materials) {
+				if (m.HasProperty ("_Color"))
+				{
+					m.color = color;
+				}
+			}
+		}
+	}
+
+
+	public void ResetPaint()
+	{
+		Color color = Player.Color;
+		color.a = 0.4f;
+		Paint(color);
 	}
 
 	private void MovePos(CardinalDirection direction) {
