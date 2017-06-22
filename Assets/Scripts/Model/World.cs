@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using UnityEngine;
 
 namespace Model
 {
@@ -8,7 +9,7 @@ namespace Model
 	{
 		public readonly int W, E;
 		private Hex[,] _terrain;
-
+        public TextAsset[] maplist;
         /*public World(int w, int e)
 		{
 			// TODO: implement properly
@@ -23,20 +24,24 @@ namespace Model
 				}
 			}
 		}*/
-        public World(int map, Player[] Players)
+        public World(TextAsset[] maplist,  Player[] Players)
         {
-            
-            String filename = "map" + map + ".txt";
-            StreamReader reader = File.OpenText(filename);
+            this.maplist = maplist;
+            StringReader reader = null;
+            System.Random rnd = new System.Random();
+            int map = rnd.Next(0, maplist.Length);
+
+            TextAsset mapData = maplist[map];
+
+            reader = new StringReader(mapData.text);
             string line;
-            int i = 0;
             line = reader.ReadLine();
             String[] mapsize = line.Split('\t');
             W = int.Parse(mapsize[0]);
             E = int.Parse(mapsize[1]);
+            int i = 0;
             _terrain = new Hex[W, E];
-            while ((line = reader.ReadLine()) != null)
-            {
+            while ((line = reader.ReadLine()) != null){
                 //just hextype
                 string[] mapline = line.Split('\t');
                 for (int j = 0; j < mapline.Length; j++)
@@ -70,9 +75,8 @@ namespace Model
                 }
                 i++;
             }
-			reader.Close ();
+            reader.Close();
         }
-
         /*public World(int map, int mapsize)
         {
             W = mapsize;
