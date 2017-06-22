@@ -40,8 +40,8 @@ namespace Model
 		
         public bool IsHexPlaceable(Player player, Hex hex)
         {
-            //if (hex != null && hex.Placeable && hex.Owner == player && hex.Occupant == null)
-            if (hex != null && hex.Occupant == null)
+            if (hex != null && hex.Placeable && hex.Owner == player && hex.Occupant == null)
+            //if (hex != null && hex.Occupant == null)
             {
                 return true;
             }
