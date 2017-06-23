@@ -16,5 +16,10 @@ namespace Behaviour
 			path[QuaterLength * 3] = TurnDirection.Mirror();
 			return path;
 		}
+
+		protected override RelativeDirection SetMirrorHint()
+		{
+			return TurnDirection;
+		}
 	}
 }

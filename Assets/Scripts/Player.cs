@@ -8,6 +8,7 @@ public sealed class Player : MonoBehaviour
 	public string Name;
 	public Color Color;
 	public Loadout Loadout;
+	public bool MirrorDefault;	// determines unit turn direction in TurnPlan.AdjustForWalls
 	
 	public int CapturedObjectives { get { return _capturedObjectives.Count; } }
 	private readonly HashSet<Objective> _capturedObjectives = new HashSet<Objective>();
@@ -18,7 +19,7 @@ public sealed class Player : MonoBehaviour
 	
 	public int DestroyedUnits { get; private set; }
 	public int SelfDestroyedUnits { get; private set; }	// just in case we need this...
-	
+
 	public GameObject[] Units	// simple alias for the loadout
 	{
 		get { return Loadout.Units; }
@@ -42,6 +43,7 @@ public sealed class Player : MonoBehaviour
 	public void DeployUnit(Unit unit)
 	{
 		if (unit.Owner != this || _activeUnits.Contains(unit)) throw new ArgumentException();
+		TotalDeployedUnits++;
 		_activeUnits.Add(unit);
 	}
 	

@@ -156,7 +156,7 @@ namespace Model
 
 		private static int Wrap(int d)
 		{
-			return Math.Abs(d % 6);
+			return (d % 6 + 6) % 6;		// add 6 then mod again to correctly map negative input
 		}
 	}
 }

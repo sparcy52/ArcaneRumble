@@ -7,6 +7,7 @@ using Random = UnityEngine.Random;
 public class GameController : MonoBehaviour
 {	
 	public WorldGenerator WorldGenerator;
+	public World World { get { return WorldGenerator.World; }}
 	
 	public Player[] Players = new Player[2];
 	private Dictionary<Player, bool> _playerUnitPlaced; // TODO: refactor resource management into Player class
@@ -46,13 +47,14 @@ public class GameController : MonoBehaviour
 	/// <param name="pos">the TileVector position to spawn it</param>
 	/// <param name="dir">the Direction for it to be facing</param>
 	/// <param name="owner">the Player owner of the Unit</param>
+	/// <param name="mirrored">whether or not the Unit is mirrored</param>
 	/// <returns>true if the operation was successful; false if not</returns>
-	public bool MakeUnit(GameObject unitPrefab, TileVector pos, CardinalDirection dir, Player owner)
+	public bool MakeUnit(GameObject unitPrefab, Player owner, TileVector pos, CardinalDirection dir, bool mirrored)
 	{
 		if (_playerUnitPlaced[owner]) return false;	// stop players placing more than one unit
 		
 		var avatar = Instantiate(unitPrefab).GetComponent<UnitAvatar>();			
-		var unit = new Unit(avatar, pos, dir, owner);
+		var unit = avatar.CreateUnit(owner, pos, dir, mirrored);
 		
 		if (!_worldController.AddUnit(unit)) // oops! bad unit placement, so delete the unit as if nothing happened
 		{

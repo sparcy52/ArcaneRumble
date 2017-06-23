@@ -6,4 +6,5 @@
 |_Move_  |  `W` `A` `S` `D` (`Q` `E`) |  `I` `J` `K` `L` (`U` `O`)
 |_Select_ | `1` `2` `3`        |   `0` `9` `8`
 |_Rotate_|  `Z` `X` | `<` `>`
+|_Flip_|  `C` | `/`
 |_Place_ |  Press _Select_ again | Press _Select_ again |
