@@ -17,32 +17,6 @@ namespace Behaviour
 			return new PredefinedPathPlan(Path, FollowPathStrict, unit, world);
 		}
 
-		public override StepPreview[] GetPreview(Unit unit, World world)
-		{
-			var pos = unit.Position;
-			var facing = unit.Facing;
-			var energy = unit.MaxEnergy;
-
-			var index = 0;
-			var preview = new List<StepPreview>();
-
-			for (var round = 0; round < 3; round++)		// some code duplication in here. ideally TurnPlans would 
-			{											// have a more functional design, but that is too much work now
-				while (energy > 0) 						
-				{	 									
-					facing = facing.Turn(unit.Mirrored ? Path[index].Mirror() : Path[index]);
-					pos += facing;
-					preview.Add(new StepPreview(pos, round));
-
-					index = (index + 1) % Path.Length;
-					energy -= 2; // assumes that moves cost 2 energy
-				}
-				energy = unit.MaxEnergy;
-			}
-			
-			return preview.ToArray();
-		}
-
 		public override RelativeDirection PreviewMirrorHint()
 		{
 			return MirrorHint;
@@ -69,6 +43,32 @@ namespace Behaviour
 		private void OnValidate()
 		{
 			Path = SetPath();
+		}
+		
+		public override StepPreview[] GetPreview(Unit unit, World world)
+		{
+			var pos = unit.Position;
+			var facing = unit.Facing;
+			var energy = unit.MaxEnergy;
+
+			var preview = new StepPreview[Math.Max(4, Path.Length)];
+
+			var index = 0;
+			for (var round = 0; index < preview.Length; round++)
+			{
+				while (energy > 0 && index < preview.Length)
+				{
+					var pathIndex = index % Path.Length;
+					facing = facing.Turn(unit.Mirrored ? Path[pathIndex].Mirror() : Path[pathIndex]);
+					pos += facing;
+					preview[index++] = new StepPreview(pos, round);
+					
+					energy -= 2; // assumes that moves cost 2 energy
+				}
+				energy = unit.MaxEnergy;
+			}
+			
+			return preview;
 		}
 	}
 
