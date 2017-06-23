@@ -1,5 +1,6 @@
 ﻿﻿using System;
 using System.Collections.Generic;
+ using UnityEngine;
 
 namespace Model
 {
@@ -16,15 +17,104 @@ namespace Model
 
 		private int _timeout = TimeoutAttempts;
 
-		public abstract Move GetNextMove();
-
 		protected TurnPlan(Unit unit, World world)
 		{
 			Unit = unit;
 			World = world;
 		}
+		
+		public abstract Move GetNextMove();
 
+		// SUBCLASS HOOKS
+
+		protected virtual void OnAccept(Move accepted)
+		{
+
+		}
+
+		protected virtual void OnReject(Move rejected, Move replacement)
+		{
+
+		}
+
+		protected virtual void OnTimeout()
+		{
+
+		}
+
+		// HELPER METHODS
+
+		protected T GetLastMove<T>() where T : TurnPlan
+		{
+			return Unit.LastMove as T;
+		}
+		
+		protected bool BlockedByWall(RelativeDirection dir)
+		{
+			return BlockedByWall(Unit.Turn(dir));	// convert to cardinal direction
+		}
+		
+		protected bool BlockedByWall(CardinalDirection dir)
+		{
+			var hex = World[Unit.Position + dir];
+			return hex == null || hex.Impassable;
+		}
+
+		protected RelativeDirection AdjustForWalls(RelativeDirection dir)
+		{
+			var cardinal = AdjustForWalls(Unit.Turn(dir));	// adjusting via cardinal directions makes adjustment
+			return Unit.Cross(cardinal);					// result independent of unit chirality (mirrored-ness)
+		}
+
+		protected CardinalDirection AdjustForWalls(CardinalDirection dir)
+		{
+			if (!BlockedByWall(dir)) return dir;
+			var scanDirection = Unit.Owner.MirrorDefault ? -1 : 1;
+			for (var i = 1; i <= 5; i++)	// sweep side to side until first exit found
+			{
+				dir = dir.ArcClockwise(i * scanDirection);
+				if (!BlockedByWall(dir)) return dir;
+				scanDirection *= -1;		// swap scan direction
+			}
+			#if DEBUG
+				Debug.LogWarningFormat("Unit at {0} has no available exits!", Unit.Position);
+			#endif
+			return dir;	// should only happen if terrain changes behind unit
+		}
+		
+		// MOVE CREATION
+
+		protected Move Halt()
+		{
+			return Move.Halt(this);
+		}
+
+		protected Move Turn(RelativeDirection relative)
+		{
+			return Move.Turn(this, relative);
+		}
+
+		protected Move Turn(CardinalDirection cardinal)
+		{
+			return this.Turn(Unit.Cross(cardinal));
+		}
+
+		protected Move Step(RelativeDirection relative)
+		{
+			return Move.Step(this, relative);
+		}
+
+		protected Move Step(CardinalDirection cardinal)
+		{
+			return this.Step(Unit.Cross(cardinal));
+		}
+		
 		// COMMUNICATION METHODS
+		
+		public bool IsActive()
+		{
+			return _timeout > 0 && Unit.CanMove();
+		}
 
 		/// <summary>
 		/// Indicates that the given move has been accepted by the WorldController.
@@ -54,35 +144,8 @@ namespace Model
 				OnTimeout();
 			}
 		}
-
-		public bool IsActive()
-		{
-			return _timeout > 0 && Unit.CanMove();
-		}
-
-		// SUBCLASS HOOKS
-
-		protected virtual void OnAccept(Move accepted)
-		{
-
-		}
-
-		protected virtual void OnReject(Move rejected, Move replacement)
-		{
-
-		}
-
-		protected virtual void OnTimeout()
-		{
-
-		}
-
-		// HELPER METHODS
-
-		protected T GetLastMove<T>() where T : TurnPlan
-		{
-			return Unit.LastMove as T;
-		}
+		
+		// PRIVATE UTILITIES
 		
 		private void ApplyMove(Move move)
 		{
@@ -103,33 +166,6 @@ namespace Model
 				}
 			}
 			Unit.ApplyMove(move);
-		}
-
-		// MOVE CREATION
-
-		protected Move Halt()
-		{
-			return Move.Halt(this);
-		}
-
-		protected Move Turn(RelativeDirection relative)
-		{
-			return Move.Turn(this, relative);
-		}
-
-		protected Move Turn(CardinalDirection cardinal)
-		{
-			return this.Turn(Unit.Facing.Cross(cardinal));
-		}
-
-		protected Move Step(RelativeDirection relative)
-		{
-			return Move.Step(this, relative);
-		}
-
-		protected Move Step(CardinalDirection cardinal)
-		{
-			return this.Step(Unit.Facing.Cross(cardinal));
 		}
 	}
 }

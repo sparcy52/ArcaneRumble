@@ -14,6 +14,7 @@ public class WorldGenerator : MonoBehaviour {
     public GameObject[] HexModels;
     private List<GameObject> _hexInstances = new List<GameObject>();
     private GameObject[] instancedTiles;
+    public TextAsset[] maplist;
 
     public World World
     {
@@ -21,7 +22,7 @@ public class WorldGenerator : MonoBehaviour {
         {
             if (_world == null)
             {
-                _world = new World(0, GameController.Players);
+                _world = new World(maplist, GameController.Players);
             }
             return _world;
         }

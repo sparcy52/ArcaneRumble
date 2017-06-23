@@ -7,15 +7,10 @@ using UnityEngine.UI;
 
 public class UnitPlacer : MonoBehaviour {
 
-	public GUISkin CustomSkin1;
-	
 	public GameController GameController;
 	public Player Player;
 
-	private GameObject[] Units	// shorthand alias
-	{
-		get { return Player.Units; }
-	}
+	public PreviewTile PreviewTile;
 
 	/// <summary>
 	/// Key bindings to select the units in the array.
@@ -36,46 +31,66 @@ public class UnitPlacer : MonoBehaviour {
 	
 	public KeyCode RotateAnticlockwiseKey		= KeyCode.Z;
 	public KeyCode RotateClockwiseKey			= KeyCode.X;
+	
+	public KeyCode MirrorToggleKey				= KeyCode.C;
 
+	private GameObject[] Units	// shorthand alias
+	{
+		get { return Player.Units; }
+	}
+	
 	private Transform _t;
 	private GameObject _preview;
+	private PreviewTile _previewTile;
+	private List<PreviewTile> _pathPreview; 		
 	
 	private int _selectedUnit 					= -1;
 	private TileVector _selectedPos 			= new TileVector(0, 0);
 	private CardinalDirection _selectedDir 		= CardinalDirection.North;
+	private bool _selectedMirrored;
 
 	// Use this for initialization
 	void Start () 
 	{
-		_t = GetComponent<Transform> ();
+		_t = GetComponent<Transform>();
+		_pathPreview = new List<PreviewTile>();
+		_selectedMirrored = Player.MirrorDefault;
+		_previewTile = Instantiate(PreviewTile, _t);
+		var color = Player.Color;
+		color.a = 0.7f;
+		_previewTile.Paint(color);
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
 		// MOVEMENT
-		if (Input.GetKeyDown(MoveNorthKey)) 	MovePos(CardinalDirection.North);
-		if (Input.GetKeyDown(MoveNortheastKey)) MovePos(CardinalDirection.Northeast);
-		if (Input.GetKeyDown(MoveSoutheastKey)) MovePos(CardinalDirection.Southeast);
-		if (Input.GetKeyDown(MoveSouthKey)) 	MovePos(CardinalDirection.South);
-		if (Input.GetKeyDown(MoveSouthwestKey)) MovePos(CardinalDirection.Southwest);
-		if (Input.GetKeyDown(MoveNorthwestKey)) MovePos(CardinalDirection.Northwest);
+		if (Input.GetKeyDown(MoveNorthKey)) 			MovePos(CardinalDirection.North);
+		if (Input.GetKeyDown(MoveNortheastKey)) 		MovePos(CardinalDirection.Northeast);
+		if (Input.GetKeyDown(MoveSoutheastKey)) 		MovePos(CardinalDirection.Southeast);
+		if (Input.GetKeyDown(MoveSouthKey)) 			MovePos(CardinalDirection.South);
+		if (Input.GetKeyDown(MoveSouthwestKey)) 		MovePos(CardinalDirection.Southwest);
+		if (Input.GetKeyDown(MoveNorthwestKey)) 		MovePos(CardinalDirection.Northwest);
 		
-		if (Input.GetKeyDown(RotateAnticlockwiseKey)) RotateDir(RelativeDirection.ForwardLeft);
-		if (Input.GetKeyDown(RotateClockwiseKey)) 	  RotateDir(RelativeDirection.ForwardRight);
+		if (Input.GetKeyDown(RotateAnticlockwiseKey)) 	RotateDir(RelativeDirection.ForwardLeft);
+		if (Input.GetKeyDown(RotateClockwiseKey)) 	  	RotateDir(RelativeDirection.ForwardRight);
+
+		if (Input.GetKeyDown(MirrorToggleKey)) 			ToggleMirror();
+
 
 		// UNIT SELECTION / PLACEMENT
 		for (var i = 0; i < UnitSelectionKeys.Length; i++)
 		{
 			if (Input.GetKeyDown(UnitSelectionKeys[i]))
-			{
+			{	
 				if (_selectedUnit == i)	// place unit on double tap of selection key
 				{
-					if (GameController.MakeUnit(Units[i], _selectedPos, _selectedDir, Player))
+					if (GameController.MakeUnit(Units[i], Player, _selectedPos, _selectedDir, _selectedMirrored))
 					{
 						_selectedUnit = -1;		// unit creation sucessful - deallocate preview
 						Destroy(_preview);
 						_preview = null;
+						UpdatePathPreview();
 					}
 				}
 				else 					// select another unit
@@ -85,21 +100,69 @@ public class UnitPlacer : MonoBehaviour {
 					_preview = Instantiate(Units[i], _t, false);
 					_preview.transform.localPosition = Vector3.zero;
 					_preview.transform.localRotation = Quaternion.identity;
+					UpdatePathPreview();
 					break;
 				}
 			}
 		}
 	}
 
+	private void UpdatePathPreview()
+	{
+		for (var i = _pathPreview.Count - 1; i >= 0; i--)		// clean up old preview
+		{
+			Destroy(_pathPreview[i].gameObject);
+			_pathPreview.RemoveAt(i);
+		}
+
+		if (_selectedUnit >= 0)									// build new one
+		{
+			var avatar = SelectedAvatar();
+			var unit = avatar.CreateUnit(Player, _selectedPos, _selectedDir, _selectedMirrored);	// need for ai plan 
+			var ai = avatar.Ai;
+			
+			foreach (var step in ai.GetPreview(unit, GameController.World))
+			{
+				var highlight = Instantiate(PreviewTile, _t, true);
+				highlight.transform.position = step.Pos.ToVector3();
+
+				var color = Player.Color;
+				color.a = 1.0f / (2 + step.Index * 2);
+				highlight.Paint(color);
+				
+				_pathPreview.Add(highlight);
+			}
+		}
+	}
+
+	private UnitAvatar SelectedAvatar()
+	{
+		if (_selectedUnit <= -1) return null;
+		else return Units[_selectedUnit].GetComponent<UnitAvatar>();
+	}
+
 	private void MovePos(CardinalDirection direction) {
 		_selectedPos = _selectedPos + direction;
 		_t.position = _selectedPos.ToVector3();
+		UpdatePathPreview();
 	}
 
 	private void RotateDir(RelativeDirection direction)
 	{
 		_selectedDir = _selectedDir.Turn(direction);
 		_t.rotation = _selectedDir.GetBearingRotation();
+		UpdatePathPreview();
+	}
+	
+	private void ToggleMirror() 
+	{
+		if (_selectedUnit >= 0)
+		{
+			var mirrorHint = SelectedAvatar().Ai.PreviewMirrorHint();
+			RotateDir(_selectedMirrored ? mirrorHint.Mirror() : mirrorHint);
+		}
+		_selectedMirrored = !_selectedMirrored;
+		UpdatePathPreview();
 	}
 
 	private void OnValidate()
