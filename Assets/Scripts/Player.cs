@@ -9,7 +9,7 @@ public sealed class Player : MonoBehaviour
 	public Color Color;
 	public Loadout Loadout;
 
-	public List<Hex> PlayerPlacables { get; set;}
+	public List<TileVector> PlayerPlacables { get; set;}
 	public int CapturedObjectives { get { return _capturedObjectives.Count; } }
 	private readonly HashSet<Objective> _capturedObjectives = new HashSet<Objective>();
 

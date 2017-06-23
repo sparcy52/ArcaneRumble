@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace Model
 {
@@ -26,8 +27,8 @@ namespace Model
 		}*/
         public World(TextAsset[] maplist,  Player[] Players)
         {
-			List<Hex> player1hex = new List<Hex>();
-			List<Hex> player2hex = new List<Hex>();
+			List<TileVector> player1hexpos = new List<TileVector>();
+			List<TileVector> player2hexpos = new List<TileVector>();
             this.maplist = maplist;
             StringReader reader = null;
             System.Random rnd = new System.Random();
@@ -63,12 +64,12 @@ namespace Model
                     else if (mapline[j] == "p1")
                     {
                         _terrain[i, j] = new Hex(HexType.Deploy, Players[0]);
-						player1hex.add(_terrain[i,j]);
+						player1hexpos.Add(new TileVector (i,j));
                     }
                     else if (mapline[j] == "p2")
                     {
                         _terrain[i, j] = new Hex(HexType.Deploy, Players[1]);
-						player2hex.add(_terrain[i,j]);
+						player2hexpos.Add(new TileVector (i,j));
                     }
                     else
                     {
@@ -80,8 +81,8 @@ namespace Model
                 i++;
             }
             reader.Close();
-			Player [0].setPlayerPlacables (player1hex);
-			Player [1].setPlayerPlacables (player2hex);
+			Players [0].PlayerPlacables = player1hexpos;
+			Players [1].PlayerPlacables = player2hexpos;
         }
         /*public World(int map, int mapsize)
         {
