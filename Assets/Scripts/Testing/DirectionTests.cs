@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Text;
+using NUnit.Framework;
 using Model;
 using Cd = Model.CardinalDirection;
 using Rd = Model.RelativeDirection;
@@ -20,6 +21,39 @@ namespace Testing
 		public static void ArcClockwise(CardinalDirection init, int arc, CardinalDirection expected)
 		{
 			Assert.AreEqual(expected, init.ArcClockwise(arc));
+		}
+
+		[Test]
+		public static void Mirror_Exhaustive()
+		{ 
+			var output = new StringBuilder();
+			for (var i = 0; i < 6; i++)
+			{
+				var expected = (RelativeDirection) Cd.North.ArcClockwise(-i);
+				var mirror = (RelativeDirection) Cd.North.ArcClockwise(i);
+				Assert.AreEqual(expected, mirror.Mirror());
+				output.AppendFormat("{0} | {1}\n", expected, mirror);
+			}
+			Assert.Pass(output.ToString());
+		}
+
+		[Test]
+		public static void CrossTurnConsistency_Exhaustive()
+		{
+			var output = new StringBuilder();
+			for (var i = 0; i < 6; i++)
+			{
+				var fromDirection = Cd.North.ArcClockwise(i);
+				for (var j = 0; j < 6; j++)
+				{
+					var toDirection = Cd.North.ArcClockwise(j);
+					var cross = fromDirection.Cross(toDirection);
+					var turn = fromDirection.Turn(cross);
+					Assert.AreEqual(toDirection, turn, "from: {0} cross: {1}", fromDirection, cross);
+					output.AppendFormat("{0} * {2} -> {1}\n", fromDirection, toDirection, cross);
+				}
+			}
+			Assert.Pass(output.ToString());
 		}
 	}
 }

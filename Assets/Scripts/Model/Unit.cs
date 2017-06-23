@@ -82,8 +82,8 @@ namespace Model
 		/// <returns>the RelativeDirection to turn to face the Direction</returns>
 		public RelativeDirection Cross(CardinalDirection to)
 		{
-			var trueDirection = Mirrored ? to.Turn(RelativeDirection.Back) : to;
-			return Facing.Cross(trueDirection);
+			var cross = Facing.Cross(to);
+			return Mirrored ? cross.Mirror() : cross;
 		}
 		
 		public bool IsDead()
