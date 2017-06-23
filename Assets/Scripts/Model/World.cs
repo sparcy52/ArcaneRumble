@@ -26,6 +26,8 @@ namespace Model
 		}*/
         public World(TextAsset[] maplist,  Player[] Players)
         {
+			List<Hex> player1hex = new List<Hex>();
+			List<Hex> player2hex = new List<Hex>();
             this.maplist = maplist;
             StringReader reader = null;
             System.Random rnd = new System.Random();
@@ -61,10 +63,12 @@ namespace Model
                     else if (mapline[j] == "p1")
                     {
                         _terrain[i, j] = new Hex(HexType.Deploy, Players[0]);
+						player1hex.add(_terrain[i,j]);
                     }
                     else if (mapline[j] == "p2")
                     {
                         _terrain[i, j] = new Hex(HexType.Deploy, Players[1]);
+						player2hex.add(_terrain[i,j]);
                     }
                     else
                     {
@@ -76,6 +80,8 @@ namespace Model
                 i++;
             }
             reader.Close();
+			Player [0].setPlayerPlacables (player1hex);
+			Player [1].setPlayerPlacables (player2hex);
         }
         /*public World(int map, int mapsize)
         {
