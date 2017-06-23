@@ -30,7 +30,7 @@ public class UIOverlay : MonoBehaviour {
 	void Update () {
 
         
-        roundNum = "round " + gameController.RoundNumber.ToString();
+        roundNum = "" + gameController.RoundNumber.ToString();
         roundNumber.text = roundNum;
 
         p1objs = "objectives " + p1.CapturedObjectives.ToString();
