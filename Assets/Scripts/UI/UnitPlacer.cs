@@ -47,13 +47,14 @@ public class UnitPlacer : MonoBehaviour {
 	private int _selectedUnit 					= -1;
 	private TileVector _selectedPos 			= new TileVector(0, 0);
 	private CardinalDirection _selectedDir 		= CardinalDirection.North;
-	private bool _selectedMirrored 				= false;
+	private bool _selectedMirrored ;
 
 	// Use this for initialization
 	void Start () 
 	{
 		_t = GetComponent<Transform>();
 		_pathPreview = new List<GameObject>();
+		_selectedMirrored = Player.MirrorDefault;
 	}
 	
 	// Update is called once per frame

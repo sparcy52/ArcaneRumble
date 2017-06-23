@@ -8,6 +8,7 @@ public sealed class Player : MonoBehaviour
 	public string Name;
 	public Color Color;
 	public Loadout Loadout;
+	public bool MirrorDefault;	// determines unit turn direction in TurnPlan.AdjustForWalls
 	
 	public int CapturedObjectives { get { return _capturedObjectives.Count; } }
 	private readonly HashSet<Objective> _capturedObjectives = new HashSet<Objective>();
