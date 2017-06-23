@@ -30,19 +30,19 @@ public class UIOverlay : MonoBehaviour {
 	void Update () {
 
         
-        roundNum = "round " + gameController.RoundNumber.ToString();
+        roundNum = "" + gameController.RoundNumber.ToString();
         roundNumber.text = roundNum;
 
-        p1objs = "objectives " + p1.CapturedObjectives.ToString();
+        p1objs = "" + p1.CapturedObjectives.ToString();
         p1objectives.text = p1objs;
 
-        p2objs = "objectives " + p2.CapturedObjectives.ToString();
+        p2objs = "" + p2.CapturedObjectives.ToString();
         p2objectives.text = p2objs;
 
-        p1kill = "mechs destroyed " + p1.DestroyedUnits.ToString();
+        p1kill = "" + p1.DestroyedUnits.ToString();
         p1killed.text = p1kill;
 
-        p2kill = "mechs destroyed " + p2.DestroyedUnits.ToString();
+        p2kill = "" + p2.DestroyedUnits.ToString();
         p2killed.text = p2kill;
 
     }
