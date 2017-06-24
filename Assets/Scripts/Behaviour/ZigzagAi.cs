@@ -17,6 +17,11 @@ namespace Behaviour
 			return path;
 		}
 
+		protected override RelativeDirection SetDirectionHint()
+		{
+			return RelativeDirection.Forward;
+		}
+
 		protected override RelativeDirection SetMirrorHint()
 		{
 			return TurnDirection;

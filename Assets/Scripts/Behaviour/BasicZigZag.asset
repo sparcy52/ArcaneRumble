@@ -11,7 +11,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bb7a63bcfd04a6780aaae949194b64b, type: 3}
   m_Name: BasicZigZag
   m_EditorClassIdentifier: 
-  Path: 00000000050000000000000001000000
-  MirrorHint: 5
+  FollowPathStrict: 1
+  DirectionHint: 0
+  MirrorHint: 1
+  Path: 00000000010000000000000005000000
   QuaterLength: 1
-  TurnDirection: 5
+  TurnDirection: 1

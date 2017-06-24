@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Name: ArcZigZagAi
   m_EditorClassIdentifier: 
   FollowPathStrict: 1
+  DirectionHint: 5
   MirrorHint: 2
   Path: 000000000100000001000000000000000500000005000000

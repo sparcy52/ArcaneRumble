@@ -87,26 +87,41 @@ public class UnitPlacer : MonoBehaviour {
 				{
 					if (GameController.MakeUnit(Units[i], Player, _selectedPos, _selectedDir, _selectedMirrored))
 					{
-						_selectedUnit = -1;		// unit creation sucessful - deallocate preview
-						Destroy(_preview);
-						_preview = null;
-						UpdatePathPreview();
+						SelectUnit(-1);
 					}
 				}
 				else 					// select another unit
 				{
-					_selectedUnit = i;
-					if (_preview != null) Destroy(_preview);
-					_preview = Instantiate(Units[i], _t, false);
-					_preview.transform.localPosition = Vector3.zero;
-					_preview.transform.localRotation = Quaternion.identity;
-					UpdatePathPreview();
+					SelectUnit(i);
 					break;
 				}
 			}
 		}
 	}
 
+	private void SelectUnit(int index) 
+	{
+		if (_selectedUnit >= 0)
+		{
+			var inverseDirectionHint = SelectedAvatar().Ai.PreviewDirectionHint().Mirror();
+			RotateDir(_selectedMirrored ? inverseDirectionHint.Mirror() : inverseDirectionHint);
+		}
+		
+		_selectedUnit = index;
+		if (_preview != null) Destroy(_preview);
+		
+		if (index >= 0)
+		{
+			_preview = Instantiate(Units[index], _t, false);
+			_preview.transform.localPosition = Vector3.zero;
+			_preview.transform.localRotation = Quaternion.identity;
+
+			var directionHint = SelectedAvatar().Ai.PreviewDirectionHint();
+			RotateDir(_selectedMirrored ? directionHint.Mirror() : directionHint);
+		}
+		UpdatePathPreview();
+	}
+	
 	private void UpdatePathPreview()
 	{
 		for (var i = _pathPreview.Count - 1; i >= 0; i--)		// clean up old preview

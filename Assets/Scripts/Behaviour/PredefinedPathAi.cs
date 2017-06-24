@@ -9,6 +9,7 @@ namespace Behaviour
 	public class PredefinedPathAi : UnitAi
 	{
 		public bool FollowPathStrict = true;
+		public RelativeDirection DirectionHint = RelativeDirection.Forward;
 		public RelativeDirection MirrorHint = RelativeDirection.Forward;
 		public RelativeDirection[] Path;
 		
@@ -16,12 +17,7 @@ namespace Behaviour
 		{
 			return new PredefinedPathPlan(Path, FollowPathStrict, unit, world);
 		}
-
-		public override RelativeDirection PreviewMirrorHint()
-		{
-			return MirrorHint;
-		}
-
+		
 		/// <summary>
 		/// Allows subclasses to override the path in a procedural manner.
 		/// </summary>
@@ -29,6 +25,15 @@ namespace Behaviour
 		protected virtual RelativeDirection[] SetPath()
 		{
 			return Path;
+		}
+		
+		/// <summary>
+		/// Allows subclasses to override the direction hint in a procedural manner.
+		/// </summary>
+		/// <returns>the new direction hint to use</returns>
+		protected virtual RelativeDirection SetDirectionHint()
+		{
+			return DirectionHint;
 		}
 		
 		/// <summary>
@@ -43,6 +48,18 @@ namespace Behaviour
 		private void OnValidate()
 		{
 			Path = SetPath();
+			MirrorHint = SetMirrorHint();
+			DirectionHint = SetDirectionHint();
+		}
+		
+		public override RelativeDirection PreviewMirrorHint()
+		{
+			return MirrorHint;
+		}
+
+		public override RelativeDirection PreviewDirectionHint()
+		{
+			return DirectionHint;
 		}
 		
 		public override StepPreview[] GetPreview(Unit unit, World world)
