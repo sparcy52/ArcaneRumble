@@ -8,7 +8,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ceb8069d0134dc09dfbb74081d143a6, type: 3}
-  m_Name: LinearWalkBasic
+  m_Script: {fileID: 11500000, guid: fb772f7f8c264475a0a71850f835b739, type: 3}
+  m_Name: Linear
   m_EditorClassIdentifier: 
-  WallBehaviour: 0
+  FollowPathStrict: 0
+  MirrorHint: 0
+  Path: 00000000

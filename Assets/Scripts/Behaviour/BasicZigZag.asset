@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Name: BasicZigZag
   m_EditorClassIdentifier: 
   Path: 00000000050000000000000001000000
+  MirrorHint: 5
   QuaterLength: 1
   TurnDirection: 5

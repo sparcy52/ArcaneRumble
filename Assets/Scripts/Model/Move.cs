@@ -58,7 +58,7 @@ namespace Model
 		/// <returns></returns>
 		public static Move Step(TurnPlan owner, RelativeDirection direction)
 		{
-			var destination = owner.Unit.Position + owner.Unit.Facing.Turn(direction);
+			var destination = owner.Unit.Position + owner.Unit.Turn(direction);
 			return new Move(owner, direction, destination, 2);
 		}
 
