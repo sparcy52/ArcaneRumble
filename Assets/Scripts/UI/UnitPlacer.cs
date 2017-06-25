@@ -135,13 +135,19 @@ public class UnitPlacer : MonoBehaviour {
 			var avatar = SelectedAvatar();
 			var unit = avatar.CreateUnit(Player, _selectedPos, _selectedDir, _selectedMirrored);	// need for ai plan 
 			var ai = avatar.Ai;
+			var color = Player.Color;
 			
 			foreach (var step in ai.GetPreview(unit, GameController.World))
 			{
+				var hex = GameController.World[step.Pos];
+				if (hex == null || hex.Impassable)
+				{
+					color = Color.red;
+				}
+					
 				var highlight = Instantiate(PreviewTile, _t, true);
 				highlight.transform.position = step.Pos.ToVector3();
 
-				var color = Player.Color;
 				color.a = 1.0f / (2 + step.Index * 2);
 				highlight.Paint(color);
 				
