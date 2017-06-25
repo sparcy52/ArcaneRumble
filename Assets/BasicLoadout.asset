@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Name: BasicLoadout
   m_EditorClassIdentifier: 
   Units:
-  - {fileID: 1544435440469678, guid: 937c1de69b657441ebb62dd65805296b, type: 2}
+  - {fileID: 1746278308672746, guid: 9e0b8d83888231641a45b5c88e2061db, type: 2}
   - {fileID: 1253763432625174, guid: ce46b31ffd296a242960ccf834aa932a, type: 2}
   - {fileID: 1272392765498076, guid: 87d239aff0ebdc74d913fb3783c3cd45, type: 2}

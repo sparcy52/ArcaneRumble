@@ -111,11 +111,11 @@ namespace Model
 			// TODO: ensure units don't go into negative energy
 			if (move.Unit != this) throw new ArgumentException("Applied move does not reference this unit");
 
-			Avatar.ApplyMove(move); // animate avatar (do this first, as it needs to read fields here)
-
 			Facing = Turn(move.Direction);
 			Position = move.Destination;
 			Energy -= move.EnergyCost;
+			
+			Avatar.EnqueueAnimation(new MoveAnimation(this, Position, Facing, move.EnergyCost));
 		}
 
 		public void ApplyCombat(Combat combat)
@@ -132,12 +132,13 @@ namespace Model
 			if (this.Energy <= 0) return;	// skip combat
 			
 			Move.Turn(_currentMove, Cross(combatDirection.Value)).Accept();	// bit gross, but should be fine
-			Avatar.ApplyCombat(other,other.Position);
 			
 			// do combat - deal damage to other unit, lose energy
 			var damage = Math.Min(this.Energy, other.Health); 	// TODO: implement buff mechanics here. 
 			other.Health -= damage;			// NB: care should be taken when using this.Health or other.Energy in
 			this.Energy -= damage;			// combat logic, as one side of combat will be resolved before the other.
+			
+			Avatar.EnqueueAnimation(new CombatAnimation(this, other, damage));
 		}
 	}
 }

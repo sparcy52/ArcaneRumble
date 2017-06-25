@@ -9,7 +9,7 @@ public class PreviewTile : MonoBehaviour
 		{
 			if (_renderers == null)
 			{
-				_renderers = _renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
+				_renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
 			}
 			return _renderers;
 		}
