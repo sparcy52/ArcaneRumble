@@ -17,18 +17,30 @@ public class UnitAvatar : MonoBehaviour
 
 	// Unity components
 	public Animator Animator { get; protected set; }
-	private MeshRenderer[] _renderers;
-	private MeshRenderer[] Renderers
+	public MeshRenderer[] PaintComponents;
+	
+	private MeshRenderer[] _allRenderers;
+	private MeshRenderer[] AllRenderers
 	{
 		get
 		{
-			if (_renderers == null)
+			if (_allRenderers == null)
 			{
-				_renderers = _renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
+				_allRenderers = gameObject.GetComponentsInChildren<MeshRenderer>();
+				foreach (var r in _allRenderers) {
+					foreach (var m in r.materials) {
+						if (m.HasProperty ("_Color"))
+						{
+							_initialColors.Add(m, m.color);
+						}
+					}
+				}
 			}
-			return _renderers;
+			return _allRenderers;
 		}
 	}
+	
+	private Dictionary<Material, Color> _initialColors = new Dictionary<Material, Color>();
 
 	// Movement state trackers
 	private Queue<IAnimation> _animQueue = new Queue<IAnimation>();
@@ -107,7 +119,7 @@ public class UnitAvatar : MonoBehaviour
 		_hpBar = Instantiate(GuiComponents.GetHpBar ()).GetComponent<BarScript>();
 		_epBar = Instantiate(GuiComponents.GetEpBar ()).GetComponent<BarScript>();
 		
-		ResetPaint();
+		TeamColorPaint();
 	}
 
 	public void EnqueueAnimation(IAnimation anim)
@@ -129,7 +141,7 @@ public class UnitAvatar : MonoBehaviour
 
 	public void Paint(Color color)
 	{
-		foreach (var r in Renderers) {
+		foreach (var r in AllRenderers) {
 			foreach (var m in r.materials) {
 				if (m.HasProperty ("_Color"))
 				{
@@ -141,7 +153,27 @@ public class UnitAvatar : MonoBehaviour
 
 	public void ResetPaint()
 	{
-		Paint(_unit.Owner.Color);
+		foreach (var r in AllRenderers) {
+			foreach (var m in r.materials) {
+				if (m.HasProperty ("_Color"))
+				{
+					m.color = _initialColors[m];
+				}
+			}
+		}
+		TeamColorPaint();
+	}
+
+	private void TeamColorPaint()
+	{
+		foreach (var r in PaintComponents) {
+			foreach (var m in r.materials) {
+				if (m.HasProperty ("_Color"))
+				{
+					m.color = _unit.Owner.Color;
+				}
+			}
+		}
 	}
 
 	public void Kill()
