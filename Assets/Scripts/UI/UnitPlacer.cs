@@ -116,6 +116,10 @@ public class UnitPlacer : MonoBehaviour {
 			_preview.transform.localPosition = Vector3.zero;
 			_preview.transform.localRotation = Quaternion.identity;
 
+			var color = Player.Color;
+			color.a = 0.5f;
+			_preview.GetComponent<UnitAvatar>().Paint(color);
+			
 			var directionHint = SelectedAvatar().Ai.PreviewDirectionHint();
 			RotateDir(_selectedMirrored ? directionHint.Mirror() : directionHint);
 		}

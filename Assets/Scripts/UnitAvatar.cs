@@ -24,6 +24,17 @@ public class UnitAvatar : MonoBehaviour
 	// Unity components
 	public Animator Animator { get; protected set; }
 	private MeshRenderer[] _renderers;
+	private MeshRenderer[] Renderers
+	{
+		get
+		{
+			if (_renderers == null)
+			{
+				_renderers = _renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
+			}
+			return _renderers;
+		}
+	}
 
 	// Movement state trackers
 	private Queue<IAnimation> _animQueue = new Queue<IAnimation>();
@@ -97,7 +108,6 @@ public class UnitAvatar : MonoBehaviour
 		_hpScript =	_hpBar.GetComponent<BarScript> ();
 		_eScript =	_epBar.GetComponent<BarScript> ();
 		
-		_renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
 		ResetPaint();
 	}
 	
@@ -113,7 +123,7 @@ public class UnitAvatar : MonoBehaviour
 
 	public void Paint(Color color)
 	{
-		foreach (var r in _renderers) {
+		foreach (var r in Renderers) {
 			foreach (var m in r.materials) {
 				if (m.HasProperty ("_Color"))
 				{
