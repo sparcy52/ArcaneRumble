@@ -2346,6 +2346,7 @@ MonoBehaviour:
   MoveSpeed: 6
   TurnSpeed: 220
   PaintComponents:
-  - {fileID: 23013392082926530}
+  - {fileID: 23423225069462446}
+  - {fileID: 23021422627737816}
+  - {fileID: 23714112437986532}
   - {fileID: 23666738006036570}
-  - {fileID: 23307402678542658}
