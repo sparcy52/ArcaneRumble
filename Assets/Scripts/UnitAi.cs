@@ -36,6 +36,17 @@ public abstract class UnitAi : ScriptableObject
 	}
 
 	/// <summary>
+	/// Used to improve Unit placement ergonomics. Used to offset Unit rotation when it is
+	/// selected, such that it tends towards the general direction that the player has selected.
+	/// Optional method. Base implementation returns RelativeDirection.Foward.
+	/// </summary>
+	/// <returns>a hint to help align unit selection</returns>
+	public virtual RelativeDirection PreviewDirectionHint()
+	{
+		return RelativeDirection.Forward;
+	}
+
+	/// <summary>
 	/// Used to improve Unit placement ergonomics. When the Unit is mirrored prior to placement,
 	/// apply this rotation to it (or its mirror, if un-mirroing) to help align the paths.
 	/// Optional method. Base implementation returns RelativeDirection.Foward.

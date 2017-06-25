@@ -8,52 +8,50 @@ public class MoveAnimation : IAnimation
 	private const float IdleAnimationBleed = 0.05f;		// when to stop the walk animation before reaching destination
 
 	// unity components
-	private UnitAvatar _unit;
+	private UnitAvatar _avatar;
 
-	// transition tracking fields
-	//private Vector3 _originPos;
 	private Vector3 _targetPos;
 
 	private Quaternion _targetRot;
 
-	[System.Obsolete("Use the destination and direction constructor instead")]
-	public MoveAnimation(UnitAvatar unit, TileVector from, TileVector to)
-	{
-		_targetRot = (to - from).GetBearingRotation();
-		_targetPos = to.ToVector3();
-		_unit = unit;
-	}
+	private float _targetEnergy;
 
-	public MoveAnimation(UnitAvatar unit, TileVector destination, CardinalDirection direction)
+	public MoveAnimation(Unit unit, TileVector destination, CardinalDirection direction, int energyCost)
 	{
-		_unit = unit;
+		_avatar = unit.Avatar;
 		_targetPos = destination.ToVector3();
 		_targetRot = direction.GetBearingRotation();
+		// TODO: implement energycost, advanced bar animation
+		_targetEnergy = unit.Energy;
 	}
 
 	public bool ApplyAnimation(float time)
 	{
 		// check if we should keep the unit in the walking animation
-		if (Vector3.Distance(_unit.Position, _targetPos) >= _unit.MoveSpeed * IdleAnimationBleed)
+		if (Vector3.Distance(_avatar.Position, _targetPos) >= _avatar.MoveSpeed * IdleAnimationBleed)
 		{
-			_unit.Animator.SetBool("Walking", true);
+			_avatar.Animator.SetBool("Walking", true);
 		}
 		else
 		{
-			_unit.Animator.SetBool("Walking", false);
+			_avatar.Animator.SetBool("Walking", false);
 		}
 
 		// do rotation
-		_unit.Rotation = Quaternion.RotateTowards(_unit.Rotation,
-			_targetRot, time * _unit.TurnSpeed);
+		_avatar.Rotation = Quaternion.RotateTowards(_avatar.Rotation,
+			_targetRot, time * _avatar.TurnSpeed);
 
 		// do position if we have rotate far enough
-		if (Quaternion.Angle(_unit.Rotation, _targetRot) <= _unit.TurnSpeed * RotationMovementBleed)
+		if (Quaternion.Angle(_avatar.Rotation, _targetRot) <= _avatar.TurnSpeed * RotationMovementBleed)
 		{
-			_unit.Position = Vector3.MoveTowards(_unit.Position,
-				_targetPos, time * _unit.MoveSpeed);
+			_avatar.Position = Vector3.MoveTowards(_avatar.Position,
+				_targetPos, time * _avatar.MoveSpeed);
 
-			if (_unit.Position == _targetPos) return true; // animation complete
+			if (_avatar.Position == _targetPos && _avatar.Rotation == _targetRot)  // animation complete
+			{
+				_avatar.UpdateEnergy(_targetEnergy);
+				return true;
+			}
 		}
 
 		return false;

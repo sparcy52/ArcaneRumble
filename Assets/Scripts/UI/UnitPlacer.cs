@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Model;
-using UnityEngine.UI;
 
 public class UnitPlacer : MonoBehaviour {
 
@@ -87,26 +84,45 @@ public class UnitPlacer : MonoBehaviour {
 				{
 					if (GameController.MakeUnit(Units[i], Player, _selectedPos, _selectedDir, _selectedMirrored))
 					{
-						_selectedUnit = -1;		// unit creation sucessful - deallocate preview
-						Destroy(_preview);
-						_preview = null;
-						UpdatePathPreview();
+						SelectUnit(-1);
 					}
 				}
 				else 					// select another unit
 				{
-					_selectedUnit = i;
-					if (_preview != null) Destroy(_preview);
-					_preview = Instantiate(Units[i], _t, false);
-					_preview.transform.localPosition = Vector3.zero;
-					_preview.transform.localRotation = Quaternion.identity;
-					UpdatePathPreview();
+					SelectUnit(i);
 					break;
 				}
 			}
 		}
 	}
 
+	private void SelectUnit(int index) 
+	{
+		if (_selectedUnit >= 0)
+		{
+			var inverseDirectionHint = SelectedAvatar().Ai.PreviewDirectionHint().Mirror();
+			RotateDir(_selectedMirrored ? inverseDirectionHint.Mirror() : inverseDirectionHint);
+		}
+		
+		_selectedUnit = index;
+		if (_preview != null) Destroy(_preview);
+		
+		if (index >= 0)
+		{
+			_preview = Instantiate(Units[index], _t, false);
+			_preview.transform.localPosition = Vector3.zero;
+			_preview.transform.localRotation = Quaternion.identity;
+
+			var color = Player.Color;
+			color.a = 0.5f;
+			_preview.GetComponent<UnitAvatar>().Paint(color);
+			
+			var directionHint = SelectedAvatar().Ai.PreviewDirectionHint();
+			RotateDir(_selectedMirrored ? directionHint.Mirror() : directionHint);
+		}
+		UpdatePathPreview();
+	}
+	
 	private void UpdatePathPreview()
 	{
 		for (var i = _pathPreview.Count - 1; i >= 0; i--)		// clean up old preview
@@ -120,13 +136,19 @@ public class UnitPlacer : MonoBehaviour {
 			var avatar = SelectedAvatar();
 			var unit = avatar.CreateUnit(Player, _selectedPos, _selectedDir, _selectedMirrored);	// need for ai plan 
 			var ai = avatar.Ai;
+			var color = Player.Color;
 			
 			foreach (var step in ai.GetPreview(unit, GameController.World))
 			{
+				var hex = GameController.World[step.Pos];
+				if (hex == null || hex.Impassable)
+				{
+					color = Color.red;
+				}
+					
 				var highlight = Instantiate(PreviewTile, _t, true);
 				highlight.transform.position = step.Pos.ToVector3();
 
-				var color = Player.Color;
 				color.a = 1.0f / (2 + step.Index * 2);
 				highlight.Paint(color);
 				
