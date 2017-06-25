@@ -9,14 +9,8 @@ public class UnitAvatar : MonoBehaviour
 	public int MaxHealth;
 	public int MaxEnergy;
 
-	private GameObject _hpBar;
-	private GameObject _epBar;
-	private Unit _unit;
-	private BarScript _hpScript;
-	private BarScript _eScript;
-
 	public UnitAi Ai;
-
+	
 	// Comsmetic variables
 	public float MoveSpeed = 5f;
 	public float TurnSpeed = 180f;
@@ -40,6 +34,11 @@ public class UnitAvatar : MonoBehaviour
 	private Queue<IAnimation> _animQueue = new Queue<IAnimation>();
 	public IAnimation CurrentAnimation { get { return _animQueue.Count > 0 ? _animQueue.Peek() : null; } }
 
+	private Unit _unit;
+	
+	private BarScript _hpBar;
+	private BarScript _epBar;
+	
 	public Quaternion Rotation
 	{
 		set { transform.rotation = value; }
@@ -65,19 +64,21 @@ public class UnitAvatar : MonoBehaviour
 		get { return _scaleMod; }
 	}
 
-	public float HpPercent {
-		get { return (float) _unit.Health / _unit.MaxHealth; }
-	}
-
-	public float EpPercent {
-		get { return (float) _unit.Energy / _unit.MaxEnergy; }
-	}
-
 	protected void Start ()
 	{
 		// IMPLEMENTATION NOTE: defer functionality from Start to SetUnit
 		Animator = GetComponent<Animator>();
 		_initScale = transform.localScale;
+	}
+
+	private void Update()
+	{
+		if (_unit == null) return;
+		
+		_hpBar.gameObject.transform.position = new 
+			Vector3 (this.Position.x, this.Position.y+0.6f, this.Position.z-1f);
+		_epBar.gameObject.transform.position = new 
+			Vector3 (this.Position.x, this.Position.y+0.4f, this.Position.z-1f);
 	}
 
 	/// <summary>
@@ -103,22 +104,27 @@ public class UnitAvatar : MonoBehaviour
 		Rotation = unit.Facing.GetBearingRotation();		
 
 		// make UI elements
-		_hpBar = Instantiate(GuiComponents.GetHpBar ());
-		_epBar = Instantiate(GuiComponents.GetEpBar ());
-		_hpScript =	_hpBar.GetComponent<BarScript> ();
-		_eScript =	_epBar.GetComponent<BarScript> ();
+		_hpBar = Instantiate(GuiComponents.GetHpBar ()).GetComponent<BarScript>();
+		_epBar = Instantiate(GuiComponents.GetEpBar ()).GetComponent<BarScript>();
 		
 		ResetPaint();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		if (_unit == null) return;
 
-		_hpBar.transform.position = new Vector3 (this.Position.x, this.Position.y+0.6f, this.Position.z-1f);
-		_hpScript.SetPercent (HpPercent);
-		_epBar.transform.position = new Vector3 (this.Position.x, this.Position.y+0.4f, this.Position.z-1f);
-		_eScript.SetPercent (EpPercent);
+	public void EnqueueAnimation(IAnimation anim)
+	{
+		_animQueue.Enqueue(anim);
+	}
+	
+	public void UpdateHealth(float health)
+	{
+		var hpPercent = health / _unit.MaxHealth;
+		_hpBar.SetPercent (hpPercent);
+	}
+
+	public void UpdateEnergy(float energy)
+	{
+		var epPercent = energy / _unit.MaxHealth;
+		_epBar.SetPercent (epPercent);
 	}
 
 	public void Paint(Color color)
@@ -145,8 +151,8 @@ public class UnitAvatar : MonoBehaviour
 
 	public void Destroy(){
 		Destroy(gameObject);
-		Destroy (_hpBar);
-		Destroy (_epBar);
+		Destroy (_hpBar.gameObject);
+		Destroy (_epBar.gameObject);
 	}
 
 	void FixedUpdate()
@@ -158,17 +164,5 @@ public class UnitAvatar : MonoBehaviour
 				_animQueue.Dequeue();
 			}
 		}
-	}
-
-	public void ApplyMove(Move move)
-	{
-		if (move.IsHalt()) return;
-		_animQueue.Enqueue(new MoveAnimation(this, move.Destination, move.Unit.Turn(move.Direction)));
-	}
-
-	public void ApplyCombat(Unit otherUnit, TileVector attackPosition)
-	{
-		//if (move.IsHalt()) return;
-		_animQueue.Enqueue(new CombatAnimation(_unit, otherUnit));
 	}
 }
