@@ -18,6 +18,7 @@ ModelImporter:
     100020: rocksForStoneHex:rock3:pSphere2
     100022: rocksForStoneHex:rock5:pSphere4
     100024: rocksForStoneHex:rock7:pSphere1
+    100026: joint1
     400000: group1
     400002: //RootNode
     400004: obelisk:directionalLight1
@@ -31,6 +32,7 @@ ModelImporter:
     400020: rocksForStoneHex:rock3:pSphere2
     400022: rocksForStoneHex:rock5:pSphere4
     400024: rocksForStoneHex:rock7:pSphere1
+    400026: joint1
     2300000: obelisk:pCylinder1
     2300002: obelisk:pCylinder2
     2300004: obelisk:pCylinder3

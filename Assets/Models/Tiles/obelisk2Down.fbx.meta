@@ -1,0 +1,137 @@
+fileFormatVersion: 2
+guid: 60296b348379a0b4f89dc14ea0e8dc87
+timeCreated: 1498361947
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: joint1
+    100002: //RootNode
+    100004: obelisk:pCylinder3
+    100006: group1
+    100008: obelisk:directionalLight1
+    100010: obelisk:pCylinder1
+    100012: obelisk:pCylinder2
+    100014: pCylinder1
+    100016: rocksForStoneHex:pSphere1
+    100018: rocksForStoneHex:pSphere2
+    100020: rocksForStoneHex:rock1:pSphere3
+    100022: rocksForStoneHex:rock3:pSphere2
+    100024: rocksForStoneHex:rock5:pSphere4
+    100026: rocksForStoneHex:rock7:pSphere1
+    400000: joint1
+    400002: //RootNode
+    400004: obelisk:pCylinder3
+    400006: group1
+    400008: obelisk:directionalLight1
+    400010: obelisk:pCylinder1
+    400012: obelisk:pCylinder2
+    400014: pCylinder1
+    400016: rocksForStoneHex:pSphere1
+    400018: rocksForStoneHex:pSphere2
+    400020: rocksForStoneHex:rock1:pSphere3
+    400022: rocksForStoneHex:rock3:pSphere2
+    400024: rocksForStoneHex:rock5:pSphere4
+    400026: rocksForStoneHex:rock7:pSphere1
+    2300000: obelisk:pCylinder3
+    2300002: obelisk:pCylinder1
+    2300004: obelisk:pCylinder2
+    2300006: pCylinder1
+    2300008: rocksForStoneHex:pSphere1
+    2300010: rocksForStoneHex:pSphere2
+    2300012: rocksForStoneHex:rock1:pSphere3
+    2300014: rocksForStoneHex:rock3:pSphere2
+    2300016: rocksForStoneHex:rock5:pSphere4
+    2300018: rocksForStoneHex:rock7:pSphere1
+    3300000: obelisk:pCylinder3
+    3300002: obelisk:pCylinder1
+    3300004: obelisk:pCylinder2
+    3300006: pCylinder1
+    3300008: rocksForStoneHex:pSphere1
+    3300010: rocksForStoneHex:pSphere2
+    3300012: rocksForStoneHex:rock1:pSphere3
+    3300014: rocksForStoneHex:rock3:pSphere2
+    3300016: rocksForStoneHex:rock5:pSphere4
+    3300018: rocksForStoneHex:rock7:pSphere1
+    4300000: obelisk:pCylinder3
+    4300002: pCylinder1
+    4300004: rocksForStoneHex:rock5:pSphere4
+    4300006: rocksForStoneHex:rock1:pSphere3
+    4300008: rocksForStoneHex:rock7:pSphere1
+    4300010: rocksForStoneHex:rock3:pSphere2
+    4300012: rocksForStoneHex:pSphere2
+    4300014: rocksForStoneHex:pSphere1
+    4300016: obelisk:pCylinder1
+    4300018: obelisk:pCylinder2
+    7400000: Take 001
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
