@@ -51,6 +51,8 @@ ModelImporter:
     100086: pTorus1
     100088: transform1
     100090: group2
+    100092: group3
+    100094: joint17
     400000: group1
     400002: ikHandle1
     400004: ikHandle2
@@ -97,6 +99,8 @@ ModelImporter:
     400086: pTorus1
     400088: transform1
     400090: group2
+    400092: group3
+    400094: joint17
     2300000: pCone1
     2300002: pCone2
     2300004: pCone3

@@ -28,7 +28,7 @@ MonoBehaviour:
   - {fileID: 114759046910824768}
   MasterBankRef: {fileID: 114634405784978892}
   StringsBankRef: {fileID: 114877935929323596}
-  stringsBankWriteTime: 636340747417919259
+  stringsBankWriteTime: 636340769431604342
   cacheVersion: 2
 --- !u!114 &114010490763114968
 MonoBehaviour:
@@ -270,7 +270,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Path: E:\ArcaneRumble\Assets\Sound-Fmod\Desktop\Master Bank.bank
-  lastModified: 636340747417281029
+  lastModified: 636340769431143999
   LoadResult: 0
   FileSizes:
   - Name: 
@@ -476,7 +476,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Path: Assets\Sound-Fmod\Desktop\Master Bank.strings.bank
-  lastModified: 636340747417919259
+  lastModified: 636340769431604342
   LoadResult: 0
   FileSizes:
   - Name: 
