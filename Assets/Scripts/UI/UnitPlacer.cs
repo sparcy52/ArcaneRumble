@@ -6,6 +6,9 @@ public class UnitPlacer : MonoBehaviour {
 
 	public GameController GameController;
 	public Player Player;
+	private MeshRenderer[] _renderers;
+	public int selectedTile;
+	public int maxTiles;
 
 	public PreviewTile PreviewTile;
 
@@ -56,19 +59,33 @@ public class UnitPlacer : MonoBehaviour {
 		var color = Player.Color;
 		color.a = 0.7f;
 		_previewTile.Paint(color);
+		
+		selectedTile = 0;
+		maxTiles = 0;
 	}
+
+
 	
 	// Update is called once per frame
 	void Update () 
 	{
+		if (maxTiles == 0) {
+			_selectedPos = Player.PlayerPlacables [selectedTile];
+			this.transform.position = Player.PlayerPlacables[selectedTile].ToVector3 ();
+			maxTiles = Player.PlayerPlacables.Count - 1;
+		}
 		// MOVEMENT
-		if (Input.GetKeyDown(MoveNorthKey)) 			MovePos(CardinalDirection.North);
-		if (Input.GetKeyDown(MoveNortheastKey)) 		MovePos(CardinalDirection.Northeast);
-		if (Input.GetKeyDown(MoveSoutheastKey)) 		MovePos(CardinalDirection.Southeast);
-		if (Input.GetKeyDown(MoveSouthKey)) 			MovePos(CardinalDirection.South);
-		if (Input.GetKeyDown(MoveSouthwestKey)) 		MovePos(CardinalDirection.Southwest);
-		if (Input.GetKeyDown(MoveNorthwestKey)) 		MovePos(CardinalDirection.Northwest);
-		
+
+		// if (Input.GetKeyDown(MoveNorthKey)) 			MovePos(CardinalDirection.North);
+		// if (Input.GetKeyDown(MoveNortheastKey)) 		MovePos(CardinalDirection.Northeast);
+		// if (Input.GetKeyDown(MoveSoutheastKey)) 		MovePos(CardinalDirection.Southeast);
+		// if (Input.GetKeyDown(MoveSouthKey)) 			MovePos(CardinalDirection.South);
+		// if (Input.GetKeyDown(MoveSouthwestKey)) 		MovePos(CardinalDirection.Southwest);
+		// if (Input.GetKeyDown(MoveNorthwestKey)) 		MovePos(CardinalDirection.Northwest);
+
+		if (Input.GetKeyDown(MoveNorthKey)) 	DirectionSelected(CardinalDirection.North);
+		if (Input.GetKeyDown(MoveSouthKey)) 	DirectionSelected(CardinalDirection.South);
+
 		if (Input.GetKeyDown(RotateAnticlockwiseKey)) 	RotateDir(RelativeDirection.ForwardLeft);
 		if (Input.GetKeyDown(RotateClockwiseKey)) 	  	RotateDir(RelativeDirection.ForwardRight);
 
@@ -163,10 +180,30 @@ public class UnitPlacer : MonoBehaviour {
 		else return Units[_selectedUnit].GetComponent<UnitAvatar>();
 	}
 
-	private void MovePos(CardinalDirection direction) {
-		_selectedPos = _selectedPos + direction;
-		_t.position = _selectedPos.ToVector3();
-		UpdatePathPreview();
+	// private void MovePos(CardinalDirection direction) {
+		// _selectedPos = _selectedPos + direction;
+		// _t.position = _selectedPos.ToVector3();
+		// UpdatePathPreview();
+	// }
+		
+	private void DirectionSelected(CardinalDirection direction) {
+		if (direction == CardinalDirection.North) {
+			if (selectedTile == 0) {
+				selectedTile = maxTiles;
+			} else {
+				selectedTile = selectedTile - 1;
+			}
+		}
+		else if (direction == CardinalDirection.South) {
+			
+			if (selectedTile == maxTiles) {
+				selectedTile = 0;
+			} else {
+				selectedTile = selectedTile + 1;
+			}
+		}
+		this.transform.position = Player.PlayerPlacables[selectedTile].ToVector3 ();
+		_selectedPos = Player.PlayerPlacables [selectedTile];
 	}
 
 	private void RotateDir(RelativeDirection direction)
