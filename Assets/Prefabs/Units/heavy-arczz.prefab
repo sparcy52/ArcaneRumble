@@ -2281,3 +2281,7 @@ MonoBehaviour:
   Ai: {fileID: 11400000, guid: 3c3a284c4fc062e4a808ef10c1e262b6, type: 2}
   MoveSpeed: 4
   TurnSpeed: 100
+  PaintComponents:
+  - {fileID: 23158502465485866}
+  - {fileID: 23997853956805944}
+  - {fileID: 23403467254826956}
