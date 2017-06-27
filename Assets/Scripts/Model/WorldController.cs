@@ -33,6 +33,8 @@ namespace Model
 				hex.Occupant = newUnit;
 				_units.Add(newUnit);
 				newUnit.Owner.DeployUnit(newUnit);
+//				Utils.Print ("Placed");
+				//newUnit. ("Play");
 				return true;
 			}
 			else return false;

@@ -142,6 +142,7 @@ GameObject:
   - component: {fileID: 4702320942202706}
   - component: {fileID: 95189954106883160}
   - component: {fileID: 114223705755936088}
+  - component: {fileID: 114707997993129244}
   m_Layer: 0
   m_Name: med-basiczz
   m_TagString: Untagged
@@ -683,9 +684,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxHealth: 4
   MaxEnergy: 3
+  inputSound: event:/Click
   Ai: {fileID: 11400000, guid: ee53000eb8caea6408a0e50dc603d908, type: 2}
   MoveSpeed: 5
   TurnSpeed: 180
+  PaintComponents: []
+--- !u!114 &114707997993129244
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1253763432625174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: event:/Click
+  PlayEvent: 0
+  StopEvent: 0
+  CollisionTag: 
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 0
+  OverrideMaxDistance: 0
 --- !u!137 &137002257506986638
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

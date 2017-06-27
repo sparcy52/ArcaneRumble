@@ -136,6 +136,7 @@ public class UnitPlacer : MonoBehaviour {
 			
 			var directionHint = SelectedAvatar().Ai.PreviewDirectionHint();
 			RotateDir(_selectedMirrored ? directionHint.Mirror() : directionHint);
+			_preview.GetComponent<UnitAvatar>().GetComponent<FMODUnity.StudioEventEmitter>().Play();
 		}
 		UpdatePathPreview();
 	}

@@ -264,6 +264,8 @@ GameObject:
   - component: {fileID: 4622245488730490}
   - component: {fileID: 95234494621409814}
   - component: {fileID: 114397476136432390}
+  - component: {fileID: 114920150026696674}
+  - component: {fileID: 114856843520040956}
   m_Layer: 0
   m_Name: heavy-arczz
   m_TagString: Untagged
@@ -2278,6 +2280,52 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxHealth: 6
   MaxEnergy: 4
+  inputSound: event:/Click
   Ai: {fileID: 11400000, guid: 3c3a284c4fc062e4a808ef10c1e262b6, type: 2}
   MoveSpeed: 4
   TurnSpeed: 100
+  PaintComponents: []
+--- !u!114 &114856843520040956
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1272392765498076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: event:/HeavyDeploy
+  PlayEvent: 0
+  StopEvent: 0
+  CollisionTag: 
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 0
+  OverrideMaxDistance: 0
+--- !u!114 &114920150026696674
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1272392765498076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: event:/Click
+  PlayEvent: 0
+  StopEvent: 0
+  CollisionTag: 
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 0
+  OverrideMaxDistance: 0
